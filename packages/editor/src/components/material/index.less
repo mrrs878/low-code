@@ -1,0 +1,41 @@
+.editor-material {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  &-item {
+    margin: 10px;
+    padding: 10px;
+    width: 80%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #ccc;
+    }
+    
+    
+  }
+  &-item__mask {
+      position: relative;
+      width: max-content;
+      cursor:move;
+      transition: all ease 0.3s;
+      &:hover {
+        box-shadow: 0px 0px 5px #ccc;
+      }
+      &::after {
+        position: absolute;
+        content: '';
+        left: 0;
+        right: 0;
+        height: 100%;
+        background-color: rgb(160, 135, 135);
+        opacity: 0;
+        user-select: none;
+        z-index: 1;
+      }
+    }
+}
