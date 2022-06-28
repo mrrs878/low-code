@@ -2,14 +2,14 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 21:58:47
+ * @LastEditTime: 2022-06-28 09:55:34
  */
 
 import React, {
   useCallback, useRef, useState,
 } from 'react';
 import {
-  Button, Input, Layout,
+  Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
 import { createRoot } from 'react-dom/client';
 import Material, { register } from './components/material';
@@ -35,16 +35,37 @@ register({
   },
 });
 
-register({
+register<ButtonProps>({
   label: 'Button',
   key: 'button',
   render(props?) {
+    console.log('[Button] render', props);
     // eslint-disable-next-line react/jsx-props-no-spreading
-    return <Button {...props}>Button</Button>;
+    return <Button {...props}>{props?.value || 'Button'}</Button>;
   },
   preview() {
     return <Button>Button</Button>;
   },
+  props: [
+    {
+      name: 'value',
+      description: '按钮文字',
+      type: String,
+      default: 'Button',
+    },
+    {
+      name: 'onClick',
+      description: '点击动作',
+      type: Function,
+      default: () => {},
+    },
+    {
+      name: 'block',
+      description: '将按钮宽度调整为其父宽度的选项',
+      type: Boolean,
+      default: false,
+    },
+  ],
 });
 
 register({
@@ -58,7 +79,7 @@ register({
   },
 });
 
-register({
+register<InputProps>({
   label: 'Input',
   key: 'input',
   render(props) {
@@ -88,16 +109,29 @@ function App() {
   return (
     <Provider>
       <Layout className="editor">
-        <Sider theme="light" width={300}>
-          <Material
-            onDragstart={onDragstart}
-            onDragend={onDragend}
+        <Sider theme="light" className="resize">
+          <Operator
+            component={selectedComponent}
+            onSave={(u, p, m) => {
+              console.log('[Operator] onSave', u, p);
+              setComponents((c) => {
+                const i = c.findIndex((item) => item.uuid === u);
+                if (i !== -1) {
+                  // eslint-disable-next-line no-param-reassign
+                  c[i].props = p;
+                  // eslint-disable-next-line no-param-reassign
+                  c[i].propsMap = m;
+                }
+                console.log('[Operator] setComponents', c);
+                return [...c];
+              });
+            }}
           />
         </Sider>
         <Content>
           <Canvas
             onSelect={(c) => {
-              console.log('[Canvas] onSelectComponent', c);
+              console.log('[Canvas] onSelectComponent', c?.props);
               setSelectedComponent(c);
             }}
             selectedComponent={selectedComponent}
@@ -106,8 +140,12 @@ function App() {
           />
         </Content>
         <Sider theme="light" width={300}>
-          <Operator />
+          <Material
+            onDragstart={onDragstart}
+            onDragend={onDragend}
+          />
         </Sider>
+
       </Layout>
     </Provider>
   );

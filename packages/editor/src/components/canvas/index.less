@@ -1,3 +1,5 @@
+@import url(../../../node_modules/antd/dist/antd.variable.less);
+
 .editor-canvas {
   flex: 1;
   height: 100%;
@@ -30,8 +32,6 @@
       opacity: 0;
     }
   }
-
-  
 
   &-item {
     position: relative;
@@ -72,11 +72,13 @@
     box-sizing: border-box;
     background-image: linear-gradient(
       90deg,
-      rgba(33, 233, 252, 0.2) 1px,
+      @primary-color 1px,
       rgba(0, 0, 0, 0) 1px
     ),
-    linear-gradient(rgba(33, 233, 252, 0.2) 1px, rgba(0, 0, 0, 0) 1px);
+    linear-gradient(@primary-color 1px, rgba(0, 0, 0, 0) 1px);
+    opacity: 0.2;
     background-size: calc(100% / 12) 32px;
+    border-right:  @primary-color 1px solid;
   }
 
   &-trash {

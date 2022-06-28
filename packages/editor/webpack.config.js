@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:08:22
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 20:10:09
+ * @LastEditTime: 2022-06-28 10:07:07
  */
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -31,7 +31,14 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
+        use: ['style-loader', 'css-loader', {
+          loader: 'less-loader',
+          options: {
+            lessOptions: {
+              javascriptEnabled: true,
+            },
+          },
+        }],
       },
     ],
   },

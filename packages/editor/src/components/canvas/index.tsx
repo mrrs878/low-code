@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 22:18:20
+ * @LastEditTime: 2022-06-27 21:57:54
  */
 
 import React, {
@@ -46,7 +46,7 @@ const Canvas: FC<IProps> = ({
         }}
         rowHeight={32}
         margin={[0, 0]}
-        verticalCompact={false}
+        // verticalCompact={false}
       >
         {
             components.map((component, index) => (
@@ -66,7 +66,7 @@ const Canvas: FC<IProps> = ({
                 <div
                   className="editor-canvas-item__mask"
                 >
-                  {component.render()}
+                  {component.render(component.propsMap)}
                 </div>
               </div>
             ))
