@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 14:31:36
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 21:08:54
+ * @LastEditTime: 2022-06-28 13:44:02
  */
 
 import React, { useCallback, useRef } from 'react';
@@ -27,8 +27,8 @@ const useMaterialDrag = ({ canvasRef, onDrop: _onDrop }:IProps) => {
     e!.dataTransfer!.dropEffect = 'move';
   };
 
-  const onDrop = useCallback((e: DragEvent | React.DragEvent<CanvasRef>) => {
-    console.log('[useMaterialDrag] onDrop', e, selectedComponent.current);
+  const onDrop = useCallback(() => {
+    console.log('[useMaterialDrag] onDrop', selectedComponent.current);
     _onDrop({ ...selectedComponent.current!, uuid: uuid() });
   }, [_onDrop]);
 

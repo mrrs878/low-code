@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-27 21:57:54
+ * @LastEditTime: 2022-06-28 13:52:44
  */
 
 import React, {
@@ -11,6 +11,7 @@ import React, {
 import classNames from 'classnames';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import { Component } from '../material/registry';
+import Tool from '../tool';
 import 'react-grid-layout/css/styles.css';
 import './index.less';
 
@@ -35,11 +36,7 @@ const Canvas: FC<IProps> = ({
 
   return (
     <div ref={ref} className={classNames('editor-canvas')}>
-      <div
-        className="editor-canvas-tool"
-      >
-        tool
-      </div>
+      <Tool />
       <ResponsiveReactGridLayout
         cols={{
           lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
@@ -60,7 +57,14 @@ const Canvas: FC<IProps> = ({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  onSelect(component);
+                  console.log('[Canvas] onClick', component);
+                  onSelect({
+                    ...component,
+                    propsMap: component.propsMap || component.props?.reduce(
+                      (acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }),
+                      {},
+                    ),
+                  });
                 }}
               >
                 <div

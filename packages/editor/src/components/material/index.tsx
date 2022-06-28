@@ -2,10 +2,11 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:42:12
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 15:27:59
+ * @LastEditTime: 2022-06-28 13:42:10
  */
 
 import React, { FC } from 'react';
+import { clone } from 'ramda';
 import {
   register, componentMap, components, Component,
 } from './registry';
@@ -26,7 +27,7 @@ const Material: FC<IProps> = ({
           <div key={component.key} className="editor-material-item">
             <div
               draggable
-              onDragStart={(e) => onDragstart(e, component)}
+              onDragStart={(e) => onDragstart(e, clone(component))}
               onDragEnd={onDragend}
               className="editor-material-item__mask"
             >

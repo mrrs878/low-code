@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 09:55:34
+ * @LastEditTime: 2022-06-28 11:59:02
  */
 
 import React, {
@@ -131,7 +131,7 @@ function App() {
         <Content>
           <Canvas
             onSelect={(c) => {
-              console.log('[Canvas] onSelectComponent', c?.props);
+              console.log('[Canvas] onSelectComponent', c);
               setSelectedComponent(c);
             }}
             selectedComponent={selectedComponent}
