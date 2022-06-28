@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 11:59:02
+ * @LastEditTime: 2022-06-28 14:19:05
  */
 
 import React, {
@@ -125,6 +125,9 @@ function App() {
                 console.log('[Operator] setComponents', c);
                 return [...c];
               });
+            }}
+            onDelete={(u) => {
+              setComponents((c) => c.filter((item) => item.uuid !== u));
             }}
           />
         </Sider>

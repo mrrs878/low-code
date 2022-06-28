@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 13:48:55
+ * @LastEditTime: 2022-06-28 14:18:15
  */
 
 import {
@@ -18,6 +18,7 @@ const { Panel } = Collapse;
 interface IProps {
   component: Component | undefined;
   onSave: (uuid: Component['uuid'], props: Component['props'], propsMap: Component['propsMap']) => void;
+  onDelete: (uuid: Component['uuid']) => void;
 }
 
 const renderOption = (prop: any) => {
@@ -42,6 +43,7 @@ const renderOption = (prop: any) => {
 const Operator: FC<IProps> = ({
   component,
   onSave,
+  onDelete,
 }) => {
   const [form] = Form.useForm();
 
@@ -96,10 +98,7 @@ const Operator: FC<IProps> = ({
                 <Form.Item className="editor-operator-button-wrapper">
                   <Button htmlType="reset" onClick={() => form.resetFields()}>重置</Button>
                   <div style={{ flex: 1 }} />
-                  <DeleteBtn onClick={() => {
-                    console.log('[delete]');
-                  }}
-                  />
+                  <DeleteBtn onConfirm={() => onDelete(component.uuid)} />
                   <Button type="primary" htmlType="submit">保存</Button>
                 </Form.Item>
               </Form>
