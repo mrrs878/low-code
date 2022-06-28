@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 13:52:44
+ * @LastEditTime: 2022-06-28 20:33:44
  */
 
 import React, {
@@ -11,7 +11,6 @@ import React, {
 import classNames from 'classnames';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import { Component } from '../material/registry';
-import Tool from '../tool';
 import 'react-grid-layout/css/styles.css';
 import './index.less';
 
@@ -36,44 +35,43 @@ const Canvas: FC<IProps> = ({
 
   return (
     <div ref={ref} className={classNames('editor-canvas')}>
-      <Tool />
       <ResponsiveReactGridLayout
         cols={{
           lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
         }}
         rowHeight={32}
         margin={[0, 0]}
-        // verticalCompact={false}
+        verticalCompact={false}
       >
         {
-            components.map((component, index) => (
+          components.map((component, index) => (
+            <div
+              className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
+              key={component.uuid}
+              data-grid={{
+                w: 1, h: 1, x: index, y: Infinity,
+              }}
+              role="presentation"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('[Canvas] onClick', component);
+                onSelect({
+                  ...component,
+                  propsMap: component.propsMap || component.props?.reduce(
+                    (acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }),
+                    {},
+                  ),
+                });
+              }}
+            >
               <div
-                className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
-                key={component.uuid}
-                data-grid={{
-                  w: 1, h: 1, x: index, y: Infinity,
-                }}
-                role="presentation"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('[Canvas] onClick', component);
-                  onSelect({
-                    ...component,
-                    propsMap: component.propsMap || component.props?.reduce(
-                      (acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }),
-                      {},
-                    ),
-                  });
-                }}
+                className="editor-canvas-item__mask"
               >
-                <div
-                  className="editor-canvas-item__mask"
-                >
-                  {component.render(component.propsMap)}
-                </div>
+                {component.render(component.propsMap)}
               </div>
-            ))
+            </div>
+          ))
         }
       </ResponsiveReactGridLayout>
       <div

@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 14:19:05
+ * @LastEditTime: 2022-06-28 21:14:56
  */
 
 import React, {
@@ -19,6 +19,7 @@ import './index.less';
 import Provider from './store';
 import useMaterialDrag from './hooks/use-material-drag';
 import { Component } from './components/material/registry';
+import Tool from './components/tool';
 
 const { Sider, Content } = Layout;
 
@@ -99,7 +100,7 @@ function App() {
   const onDrop = useCallback((c: Component) => {
     console.log('[onDrop]', c);
     setComponents((pre) => {
-      console.log('[setComponents]', pre);
+      console.log('[setComponents]', pre.concat(c));
       return pre.concat(c);
     });
   }, []);
@@ -131,7 +132,8 @@ function App() {
             }}
           />
         </Sider>
-        <Content>
+        <Content className="editor-content">
+          <Tool original="" modified={JSON.stringify(components.map(({ key, label, uuid }) => ({ key, label, uuid })), null, 4)} />
           <Canvas
             onSelect={(c) => {
               console.log('[Canvas] onSelectComponent', c);

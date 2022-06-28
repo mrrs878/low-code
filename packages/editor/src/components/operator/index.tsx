@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 14:18:15
+ * @LastEditTime: 2022-06-28 20:32:21
  */
 
 import {
@@ -63,12 +63,12 @@ const Operator: FC<IProps> = ({
           <Row gutter={16}>
             <Col>
               <Form.Item label="网格线">
-                <Switch defaultChecked />
+                <Switch disabled />
               </Form.Item>
             </Col>
             <Col>
               <Form.Item label="自动对齐到网格线">
-                <Switch defaultChecked />
+                <Switch disabled />
               </Form.Item>
             </Col>
           </Row>
