@@ -2,10 +2,11 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:08:22
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 10:36:33
+ * @LastEditTime: 2022-06-28 11:03:36
  */
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 /** @type { import('webpack').Configuration } */
 module.exports = {
@@ -23,7 +24,16 @@ module.exports = {
       },
       {
         test: /\.ts(x?)$/,
-        use: 'ts-loader',
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react'],
+              plugins: ['react-refresh/babel'],
+            },
+          },
+          'ts-loader',
+        ],
       },
       {
         test: /\.css$/,
@@ -46,10 +56,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
     }),
+    new ReactRefreshWebpackPlugin(),
   ],
   devServer: {
     port: 8086,
     hot: true,
+    liveReload: false,
   },
   resolve: {
     extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
