@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 13:34:38
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-27 22:00:53
+ * @LastEditTime: 2022-06-29 23:25:35
  */
 
 import React from 'react';
@@ -30,7 +30,7 @@ const componentMap: Record<Component['label'], Component> = {};
 
 function register<T>(component: Component<T>) {
   components.push(component);
-  componentMap[component.label] = component;
+  componentMap[component.key] = component;
 }
 
 export { register, componentMap, components };

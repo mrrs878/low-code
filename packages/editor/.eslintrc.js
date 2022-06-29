@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 11:01:46
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 22:21:16
+ * @LastEditTime: 2022-06-29 14:35:23
  */
 
 module.exports = {
@@ -22,6 +22,7 @@ module.exports = {
         namedComponents: "function-declaration",
       },
     ],
+    'import/prefer-default-export': 'off',
   },
   plugins: ["@typescript-eslint", "import"],
   ignorePatterns: [".eslintrc.js"],

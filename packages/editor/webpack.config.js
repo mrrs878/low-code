@@ -2,11 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:08:22
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 11:03:36
+ * @LastEditTime: 2022-06-29 11:47:23
  */
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const path = require('path');
 
 /** @type { import('webpack').Configuration } */
 module.exports = {
@@ -65,6 +66,12 @@ module.exports = {
   },
   resolve: {
     extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      Components: path.resolve(__dirname, './src/components'),
+      Store: path.resolve(__dirname, './src/store'),
+      Utils: path.resolve(__dirname, './src/utils'),
+      Hooks: path.resolve(__dirname, './src/hooks'),
+    },
   },
   devtool: 'source-map',
 };

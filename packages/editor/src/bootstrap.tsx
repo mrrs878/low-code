@@ -2,24 +2,27 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 21:14:56
+ * @LastEditTime: 2022-06-29 23:31:26
  */
 
 import React, {
-  useCallback, useRef, useState,
+  useCallback, useContext, useRef, useState,
 } from 'react';
 import {
   Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
 import { createRoot } from 'react-dom/client';
-import Material, { register } from './components/material';
-import Canvas from './components/canvas';
-import Operator from './components/operator';
+import { Layout as GridLayout } from 'react-grid-layout';
+import Canvas from 'Components/canvas';
+import Material, { register } from 'Components/material';
+import Operator from 'Components/operator';
+import { Component } from 'Components/material/registry';
+import Tool from 'Components/tool';
+import Provider from 'Store/provider';
+import { DispatchContext, StateContext } from 'Store/context';
+import { assignGridFromLayout, assignSchemaFromComponent } from 'Store/tool';
+import useMaterialDrag from 'Hooks/use-material-drag';
 import './index.less';
-import Provider from './store';
-import useMaterialDrag from './hooks/use-material-drag';
-import { Component } from './components/material/registry';
-import Tool from './components/tool';
 
 const { Sider, Content } = Layout;
 
@@ -94,68 +97,74 @@ register<InputProps>({
 
 function App() {
   const canvasRef = useRef(null);
-  const [components, setComponents] = useState<Array<Component>>([]);
+  const { modifiedSchema } = useContext(StateContext);
+  const { updateComponent, deleteComponent } = useContext(DispatchContext);
   const [selectedComponent, setSelectedComponent] = useState<Component>();
 
   const onDrop = useCallback((c: Component) => {
     console.log('[onDrop]', c);
-    setComponents((pre) => {
-      console.log('[setComponents]', pre.concat(c));
-      return pre.concat(c);
-    });
-  }, []);
+    updateComponent(assignSchemaFromComponent(c));
+  }, [updateComponent]);
 
   const [onDragstart, onDragend] = useMaterialDrag({ canvasRef, onDrop });
 
   return (
-    <Provider>
-      <Layout className="editor">
-        <Sider theme="light" className="resize">
-          <Operator
-            component={selectedComponent}
-            onSave={(u, p, m) => {
-              console.log('[Operator] onSave', u, p);
-              setComponents((c) => {
-                const i = c.findIndex((item) => item.uuid === u);
-                if (i !== -1) {
-                  // eslint-disable-next-line no-param-reassign
-                  c[i].props = p;
-                  // eslint-disable-next-line no-param-reassign
-                  c[i].propsMap = m;
-                }
-                console.log('[Operator] setComponents', c);
-                return [...c];
-              });
-            }}
-            onDelete={(u) => {
-              setComponents((c) => c.filter((item) => item.uuid !== u));
-            }}
-          />
-        </Sider>
-        <Content className="editor-content">
-          <Tool original="" modified={JSON.stringify(components.map(({ key, label, uuid }) => ({ key, label, uuid })), null, 4)} />
-          <Canvas
-            onSelect={(c) => {
-              console.log('[Canvas] onSelectComponent', c);
-              setSelectedComponent(c);
-            }}
-            selectedComponent={selectedComponent}
-            components={components}
-            containerRef={canvasRef}
-          />
-        </Content>
-        <Sider theme="light" width={300}>
-          <Material
-            onDragstart={onDragstart}
-            onDragend={onDragend}
-          />
-        </Sider>
-
-      </Layout>
-    </Provider>
+    <Layout className="editor">
+      <Sider theme="light" className="resize">
+        <Operator
+          component={selectedComponent}
+          onSave={(c, p) => {
+            console.log('[Operator] onSave');
+            if (!c.uuid) {
+              return;
+            }
+            const s = modifiedSchema.find((item) => item.uuid === c.uuid);
+            if (!s) {
+              return;
+            }
+            updateComponent({ ...s, props: p });
+          }}
+          onDelete={deleteComponent}
+        />
+      </Sider>
+      <Content className="editor-content">
+        <Tool />
+        <Canvas
+          onSelect={(c) => {
+            console.log('[Canvas] onSelectComponent', c);
+            setSelectedComponent(c);
+          }}
+          onDragStop={(l) => {
+            console.log('[Canvas] onDragend', l);
+            const tmp = l[0];
+            if (modifiedSchema.length === 0) {
+              updateComponent(assignSchemaFromComponent(selectedComponent!, tmp));
+            }
+            const s = modifiedSchema.find((item) => item.uuid === tmp.i);
+            if (!s) {
+              return;
+            }
+            updateComponent({ ...s, grid: assignGridFromLayout(l[0]) });
+          }}
+          schema={modifiedSchema}
+          selectedComponent={selectedComponent}
+          containerRef={canvasRef}
+        />
+      </Content>
+      <Sider theme="light" width={300}>
+        <Material
+          onDragstart={onDragstart}
+          onDragend={onDragend}
+        />
+      </Sider>
+    </Layout>
   );
 }
 
 const root = createRoot(document.querySelector('#root')!);
 
-root.render(<App />);
+root.render(
+  <Provider>
+    <App />
+  </Provider>,
+);

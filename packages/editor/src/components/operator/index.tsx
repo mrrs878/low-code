@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 20:32:21
+ * @LastEditTime: 2022-06-29 23:09:46
  */
 
 import {
@@ -17,7 +17,7 @@ const { Panel } = Collapse;
 
 interface IProps {
   component: Component | undefined;
-  onSave: (uuid: Component['uuid'], props: Component['props'], propsMap: Component['propsMap']) => void;
+  onSave: (uuid: Component, propsMap: Component['propsMap']) => void;
   onDelete: (uuid: Component['uuid']) => void;
 }
 
@@ -87,7 +87,7 @@ const Operator: FC<IProps> = ({
                     prop.value = values[prop.name];
                   });
 
-                  onSave(component.uuid, component.props, values);
+                  onSave(component, values);
                 }}
                 initialValues={component.propsMap}
               >

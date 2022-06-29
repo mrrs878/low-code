@@ -2,16 +2,17 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-28 20:33:44
+ * @LastEditTime: 2022-06-29 23:00:55
  */
 
 import React, {
   FC, MutableRefObject,
 } from 'react';
 import classNames from 'classnames';
-import { WidthProvider, Responsive } from 'react-grid-layout';
-import { Component } from '../material/registry';
+import { WidthProvider, Responsive, Layout } from 'react-grid-layout';
+import { Schema } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
+import { Component, componentMap } from 'Components/material/registry';
 import './index.less';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -20,19 +21,26 @@ export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
 interface IProps {
   containerRef: CanvasRef;
-  components: Array<Component>;
+  schema: Schema;
   onSelect: (component?: Component) => void;
+  onDragStop: (layout: Array<Layout>) => void;
   selectedComponent: Component | undefined;
 }
 
 const Canvas: FC<IProps> = ({
   containerRef: ref,
-  components,
+  schema,
   onSelect,
+  onDragStop,
   selectedComponent,
 }) => {
-  console.log('[Canvas] render components', components);
+  const components = schema.map((item) => ({
+    ...item,
+    ...componentMap[item.type],
+    propsMap: item.props,
+  })) as Array<Component>;
 
+  console.log('[Canvas] render schema', schema, components);
   return (
     <div ref={ref} className={classNames('editor-canvas')}>
       <ResponsiveReactGridLayout
@@ -42,15 +50,17 @@ const Canvas: FC<IProps> = ({
         rowHeight={32}
         margin={[0, 0]}
         verticalCompact={false}
+        onDragStop={(layout) => {
+          console.log('[Canvas] onDragStop', layout);
+          onDragStop(layout);
+        }}
       >
         {
           components.map((component, index) => (
             <div
               className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
-              key={component.uuid}
-              data-grid={{
-                w: 1, h: 1, x: index, y: Infinity,
-              }}
+              key={schema[index].uuid}
+              data-grid={schema[index].grid}
               role="presentation"
               onClick={(e) => {
                 e.preventDefault();
