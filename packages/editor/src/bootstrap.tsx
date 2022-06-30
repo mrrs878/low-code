@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:31:26
+ * @LastEditTime: 2022-06-30 10:04:51
  */
 
 import React, {
@@ -12,7 +12,6 @@ import {
   Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
 import { createRoot } from 'react-dom/client';
-import { Layout as GridLayout } from 'react-grid-layout';
 import Canvas from 'Components/canvas';
 import Material, { register } from 'Components/material';
 import Operator from 'Components/operator';
