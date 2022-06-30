@@ -2,8 +2,10 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 18:11:13
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-26 18:12:38
+ * @LastEditTime: 2022-06-30 21:31:23
  */
+
+import { Component } from 'Components/material/registry';
 
 /**
  * 快速生成uuid
@@ -15,4 +17,13 @@ export function uuid() {
   const res = url.toString();
   URL.revokeObjectURL(url);
   return res.substr(res.lastIndexOf('/') + 1);
+}
+
+/**
+ * props转propsMap
+ * @param props props
+ * @returns propsMap
+ */
+export function props2propsMap(props: Component['props']): Component['propsMap'] {
+  return props?.reduce((acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }), {});
 }

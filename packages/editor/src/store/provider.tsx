@@ -2,36 +2,58 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:17
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:07:12
+ * @LastEditTime: 2022-06-30 21:33:16
  */
 
+import { clone } from 'ramda';
 import React, {
   FC, useCallback, useMemo, useState,
 } from 'react';
 import {
   StateContext, DispatchContext, IStateContext, IDispatchContext,
 } from 'Store/context';
+import { uuid as generateUUID } from 'Utils/index';
+import { assignGridFromLayout, assignSchemaFromComponent } from './tool';
 
 const Provider: FC<any> = ({
   children,
 }) => {
   const [original, setOriginal] = useState<IStateContext['originalSchema']>([]);
-  const [modified, setModified] = useState<IStateContext['originalSchema']>([]);
+  const [modified, setModified] = useState<IStateContext['modifiedSchema']>([]);
 
   const importSchema = useCallback((schema: string) => {
     setOriginal(JSON.parse(schema));
   }, []);
 
-  const updateComponent = useCallback<IDispatchContext['updateComponent']>((s) => {
-    setModified((pre) => {
-      if (pre.length === 0) {
-        return [s];
-      }
-      const tmp = pre.findIndex((item) => item.uuid === s.uuid);
-      if (tmp === -1) {
+  const updateComponent = useCallback<IDispatchContext['updateComponent']>((u, p) => {
+    setModified((_pre) => {
+      const pre = clone(_pre);
+      const s = pre.find((item) => item.uuid === u);
+      if (!s) {
         return pre;
       }
-      return [...pre.slice(0, tmp), s, ...pre.slice(tmp + 1)];
+      s.props = p;
+      return pre;
+    });
+  }, []);
+
+  const dragComponent = useCallback<IDispatchContext['dragComponent']>((u, l) => {
+    setModified((_pre) => {
+      const pre = clone(_pre);
+      const s = pre.find((item) => item.uuid === u);
+      if (!s) {
+        return pre;
+      }
+      s.grid = assignGridFromLayout(l);
+      return pre;
+    });
+  }, []);
+
+  const addComponent = useCallback<IDispatchContext['addComponent']>((c, l) => {
+    setModified((_pre) => {
+      const pre = clone(_pre);
+      const s = assignSchemaFromComponent({ ...c, uuid: generateUUID() }, l);
+      return pre.concat(s);
     });
   }, []);
 
@@ -48,7 +70,9 @@ const Provider: FC<any> = ({
     importSchema,
     updateComponent,
     deleteComponent,
-  }), [deleteComponent, importSchema, updateComponent]);
+    addComponent,
+    dragComponent,
+  }), [addComponent, deleteComponent, dragComponent, importSchema, updateComponent]);
 
   return (
     <StateContext.Provider value={state}>

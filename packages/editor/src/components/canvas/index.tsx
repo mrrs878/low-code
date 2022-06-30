@@ -2,17 +2,19 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:00:55
+ * @LastEditTime: 2022-06-30 21:38:07
  */
 
 import React, {
-  FC, MutableRefObject,
+  FC, MutableRefObject, useContext,
 } from 'react';
 import classNames from 'classnames';
-import { WidthProvider, Responsive, Layout } from 'react-grid-layout';
-import { Schema } from 'Store/context';
+import { WidthProvider, Responsive } from 'react-grid-layout';
+import { clone } from 'ramda';
+import { DispatchContext, StateContext } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
 import { Component, componentMap } from 'Components/material/registry';
+import { props2propsMap } from 'Utils/index';
 import './index.less';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -20,59 +22,63 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
 interface IProps {
-  containerRef: CanvasRef;
-  schema: Schema;
+  dragComponentRef: MutableRefObject<Component<any> | null>;
   onSelect: (component?: Component) => void;
-  onDragStop: (layout: Array<Layout>) => void;
   selectedComponent: Component | undefined;
 }
 
 const Canvas: FC<IProps> = ({
-  containerRef: ref,
-  schema,
+  dragComponentRef,
   onSelect,
-  onDragStop,
   selectedComponent,
 }) => {
-  const components = schema.map((item) => ({
+  const { modifiedSchema } = useContext(StateContext);
+  const { addComponent, dragComponent } = useContext(DispatchContext);
+
+  const components = modifiedSchema.map((item) => ({
     ...item,
-    ...componentMap[item.type],
-    propsMap: item.props,
+    ...clone(componentMap[item.type]),
+    propsMap: item.props || componentMap[item.type].propsMap || props2propsMap(item.props),
   })) as Array<Component>;
 
-  console.log('[Canvas] render schema', schema, components);
+  console.log('[Canvas] render schema', modifiedSchema, components);
   return (
-    <div ref={ref} className={classNames('editor-canvas')}>
-      <ResponsiveReactGridLayout
-        cols={{
-          lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
-        }}
-        rowHeight={32}
-        margin={[0, 0]}
-        verticalCompact={false}
-        onDragStop={(layout) => {
-          console.log('[Canvas] onDragStop', layout);
-          onDragStop(layout);
-        }}
-      >
-        {
+    <ResponsiveReactGridLayout
+      cols={{
+        lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
+      }}
+      className={classNames('editor-canvas')}
+      rowHeight={32}
+      isDroppable
+      measureBeforeMount={false}
+      useCSSTransforms={false}
+      margin={[0, 0]}
+      verticalCompact={false}
+      onDragStop={([layout]) => {
+        console.log('[Canvas] onDragStop', layout);
+        dragComponent(layout.i, layout);
+      }}
+      onDrop={(_, l) => {
+        console.log('[Canvas] onDrop', l);
+        addComponent(dragComponentRef.current!, l);
+      }}
+    >
+      {
           components.map((component, index) => (
             <div
               className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
-              key={schema[index].uuid}
-              data-grid={schema[index].grid}
+              key={modifiedSchema[index].uuid}
+              data-grid={modifiedSchema[index].grid}
               role="presentation"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('[Canvas] onClick', component);
-                onSelect({
-                  ...component,
-                  propsMap: component.propsMap || component.props?.reduce(
-                    (acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }),
-                    {},
-                  ),
-                });
+                console.log('[Canvas] onClick', component, modifiedSchema[index]);
+                if (selectedComponent?.uuid === component.uuid) {
+                  onSelect();
+                  return;
+                }
+                onSelect(component);
               }}
             >
               <div
@@ -83,15 +89,7 @@ const Canvas: FC<IProps> = ({
             </div>
           ))
         }
-      </ResponsiveReactGridLayout>
-      <div
-        className="editor-canvas-line"
-        role="presentation"
-        onClick={() => {
-          onSelect();
-        }}
-      />
-    </div>
+    </ResponsiveReactGridLayout>
   );
 };
 

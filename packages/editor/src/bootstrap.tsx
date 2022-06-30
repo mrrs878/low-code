@@ -2,12 +2,10 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 11:37:47
+ * @LastEditTime: 2022-06-30 21:53:05
  */
 
-import React, {
-  useCallback, useContext, useRef, useState,
-} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
@@ -18,8 +16,7 @@ import Operator from 'Components/operator';
 import { Component } from 'Components/material/registry';
 import Tool from 'Components/tool';
 import Provider from 'Store/provider';
-import { DispatchContext, StateContext } from 'Store/context';
-import { assignGridFromLayout, assignSchemaFromComponent } from 'Store/tool';
+import { DispatchContext } from 'Store/context';
 import useMaterialDrag from 'Hooks/use-material-drag';
 import './index.less';
 
@@ -95,67 +92,44 @@ register<InputProps>({
 });
 
 function App() {
-  const canvasRef = useRef(null);
-  const { modifiedSchema } = useContext(StateContext);
   const { updateComponent, deleteComponent } = useContext(DispatchContext);
   const [selectedComponent, setSelectedComponent] = useState<Component>();
+  // const dragComponentRef = useRef<Component | null>(null);
 
-  const onDrop = useCallback((c: Component) => {
-    console.log('[onDrop]', c);
-    updateComponent(assignSchemaFromComponent(c));
-  }, [updateComponent]);
-
-  const [onDragstart, onDragend] = useMaterialDrag({ canvasRef, onDrop });
+  const [dragComponentRef, onDragstart, onDragend] = useMaterialDrag();
 
   return (
     <Layout className="editor">
       <Sider theme="light" className="resize">
         <Operator
           component={selectedComponent}
-          onSave={(c, p) => {
+          onSave={(u, p) => {
             console.log('[Operator] onSave');
-            if (!c.uuid) {
+            if (!u) {
               return Promise.reject(new Error('组件不存在'));
             }
-            const s = modifiedSchema.find((item) => item.uuid === c.uuid);
-            if (!s) {
-              return Promise.reject(new Error('组件不存在'));
-            }
-            updateComponent({ ...s, props: p });
+            updateComponent(u, p);
             return Promise.resolve('保存成功');
           }}
-          onDelete={deleteComponent}
+          onDelete={(c) => {
+            setSelectedComponent(undefined);
+            deleteComponent(c);
+          }}
         />
       </Sider>
       <Content className="editor-content">
         <Tool />
         <Canvas
+          dragComponentRef={dragComponentRef}
           onSelect={(c) => {
             console.log('[Canvas] onSelectComponent', c);
             setSelectedComponent(c);
           }}
-          onDragStop={(l) => {
-            console.log('[Canvas] onDragend', l);
-            const tmp = l[0];
-            if (modifiedSchema.length === 0) {
-              updateComponent(assignSchemaFromComponent(selectedComponent!, tmp));
-            }
-            const s = modifiedSchema.find((item) => item.uuid === tmp.i);
-            if (!s) {
-              return;
-            }
-            updateComponent({ ...s, grid: assignGridFromLayout(l[0]) });
-          }}
-          schema={modifiedSchema}
           selectedComponent={selectedComponent}
-          containerRef={canvasRef}
         />
       </Content>
       <Sider theme="light" width={300}>
-        <Material
-          onDragstart={onDragstart}
-          onDragend={onDragend}
-        />
+        <Material onDragstart={onDragstart} onDragend={onDragend} />
       </Sider>
     </Layout>
   );

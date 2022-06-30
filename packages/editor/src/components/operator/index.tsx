@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 11:36:48
+ * @LastEditTime: 2022-06-30 20:59:21
  */
 
 import {
@@ -17,24 +17,31 @@ const { Panel } = Collapse;
 
 interface IProps {
   component: Component | undefined;
-  onSave: (uuid: Component, propsMap: Component['propsMap']) => Promise<string>;
+  onSave: (uuid: Component['uuid'], propsMap: Component['propsMap']) => Promise<string>;
   onDelete: (uuid: Component['uuid']) => void;
 }
 
 const renderOption = (prop: any) => {
   let Option;
+  let valuePropName = 'value';
   switch (prop.type) {
     case Boolean:
-      Option = <Switch defaultChecked={prop.value || prop.default} />;
+      Option = <Switch />;
+      valuePropName = 'checked';
       break;
     case String:
-      Option = <Input placeholder={prop.value || prop.default} />;
+      Option = <Input />;
       break;
     default:
       break;
   }
   return Option && (
-    <Form.Item key={prop.name} label={prop.description} name={prop.name}>
+    <Form.Item
+      valuePropName={valuePropName}
+      key={prop.name}
+      label={prop.description}
+      name={prop.name}
+    >
       {Option}
     </Form.Item>
   );
@@ -87,7 +94,7 @@ const Operator: FC<IProps> = ({
                     prop.value = values[prop.name];
                   });
 
-                  onSave(component, values)
+                  onSave(component.uuid, values)
                     .then((res) => {
                       message.info(res);
                     }).catch((err) => {
