@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 10:04:51
+ * @LastEditTime: 2022-06-30 11:37:47
  */
 
 import React, {
@@ -115,13 +115,14 @@ function App() {
           onSave={(c, p) => {
             console.log('[Operator] onSave');
             if (!c.uuid) {
-              return;
+              return Promise.reject(new Error('组件不存在'));
             }
             const s = modifiedSchema.find((item) => item.uuid === c.uuid);
             if (!s) {
-              return;
+              return Promise.reject(new Error('组件不存在'));
             }
             updateComponent({ ...s, props: p });
+            return Promise.resolve('保存成功');
           }}
           onDelete={deleteComponent}
         />

@@ -2,11 +2,11 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:09:46
+ * @LastEditTime: 2022-06-30 11:36:48
  */
 
 import {
-  Alert, Form, Input, Collapse, Switch, Divider, Typography, Row, Col, Button,
+  Alert, Form, Input, Collapse, Switch, Divider, Typography, Row, Col, Button, message,
 } from 'antd';
 import React, { FC, useEffect } from 'react';
 import { Component } from '../material/registry';
@@ -17,7 +17,7 @@ const { Panel } = Collapse;
 
 interface IProps {
   component: Component | undefined;
-  onSave: (uuid: Component, propsMap: Component['propsMap']) => void;
+  onSave: (uuid: Component, propsMap: Component['propsMap']) => Promise<string>;
   onDelete: (uuid: Component['uuid']) => void;
 }
 
@@ -87,7 +87,12 @@ const Operator: FC<IProps> = ({
                     prop.value = values[prop.name];
                   });
 
-                  onSave(component, values);
+                  onSave(component, values)
+                    .then((res) => {
+                      message.info(res);
+                    }).catch((err) => {
+                      message.error(err);
+                    });
                 }}
                 initialValues={component.propsMap}
               >
