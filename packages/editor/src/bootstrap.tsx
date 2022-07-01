@@ -2,10 +2,10 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 21:53:05
+ * @LastEditTime: 2022-07-01 10:19:19
  */
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
@@ -17,7 +17,6 @@ import { Component } from 'Components/material/registry';
 import Tool from 'Components/tool';
 import Provider from 'Store/provider';
 import { DispatchContext } from 'Store/context';
-import useMaterialDrag from 'Hooks/use-material-drag';
 import './index.less';
 
 const { Sider, Content } = Layout;
@@ -94,9 +93,7 @@ register<InputProps>({
 function App() {
   const { updateComponent, deleteComponent } = useContext(DispatchContext);
   const [selectedComponent, setSelectedComponent] = useState<Component>();
-  // const dragComponentRef = useRef<Component | null>(null);
-
-  const [dragComponentRef, onDragstart, onDragend] = useMaterialDrag();
+  const dragComponentRef = useRef<Component | null>(null);
 
   return (
     <Layout className="editor">
@@ -129,7 +126,7 @@ function App() {
         />
       </Content>
       <Sider theme="light" width={300}>
-        <Material onDragstart={onDragstart} onDragend={onDragend} />
+        <Material onDrop={(c) => { dragComponentRef.current = c; }} />
       </Sider>
     </Layout>
   );

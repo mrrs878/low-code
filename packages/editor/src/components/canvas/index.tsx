@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 21:38:07
+ * @LastEditTime: 2022-07-01 10:57:42
  */
 
 import React, {
@@ -11,7 +11,7 @@ import React, {
 import classNames from 'classnames';
 import { WidthProvider, Responsive } from 'react-grid-layout';
 import { clone } from 'ramda';
-import { DispatchContext, StateContext } from 'Store/context';
+import { DispatchContext, Schema, StateContext } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
 import { Component, componentMap } from 'Components/material/registry';
 import { props2propsMap } from 'Utils/index';
@@ -21,8 +21,16 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
+function schema2components(schema: Schema) {
+  return schema.map((item) => ({
+    ...item,
+    ...clone(componentMap[item.type]),
+    propsMap: item.props || props2propsMap(componentMap[item.type].props),
+  })) as Array<Component>;
+}
+
 interface IProps {
-  dragComponentRef: MutableRefObject<Component<any> | null>;
+  dragComponentRef: MutableRefObject<Component | null>;
   onSelect: (component?: Component) => void;
   selectedComponent: Component | undefined;
 }
@@ -35,11 +43,7 @@ const Canvas: FC<IProps> = ({
   const { modifiedSchema } = useContext(StateContext);
   const { addComponent, dragComponent } = useContext(DispatchContext);
 
-  const components = modifiedSchema.map((item) => ({
-    ...item,
-    ...clone(componentMap[item.type]),
-    propsMap: item.props || componentMap[item.type].propsMap || props2propsMap(item.props),
-  })) as Array<Component>;
+  const components = schema2components(modifiedSchema);
 
   console.log('[Canvas] render schema', modifiedSchema, components);
   return (
