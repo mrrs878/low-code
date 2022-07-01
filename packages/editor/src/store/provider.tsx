@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:17
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 21:33:16
+ * @LastEditTime: 2022-07-01 19:38:22
  */
 
 import { clone } from 'ramda';
@@ -22,7 +22,8 @@ const Provider: FC<any> = ({
   const [modified, setModified] = useState<IStateContext['modifiedSchema']>([]);
 
   const importSchema = useCallback((schema: string) => {
-    setOriginal(JSON.parse(schema));
+    setOriginal(JSON.parse(schema || '{}'));
+    setModified(JSON.parse(schema || '{}'));
   }, []);
 
   const updateComponent = useCallback<IDispatchContext['updateComponent']>((u, p) => {
