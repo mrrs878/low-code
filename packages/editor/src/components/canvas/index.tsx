@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-01 19:43:47
+ * @LastEditTime: 2022-07-01 19:55:36
  */
 
 import React, {
@@ -57,7 +57,7 @@ const Canvas: FC<IProps> = ({
       measureBeforeMount={false}
       useCSSTransforms={false}
       verticalCompact={false}
-      onDragStop={([layout]) => {
+      onDragStop={(_, __, layout) => {
         console.log('[Canvas] onDragStop', layout);
         dragComponent(layout.i, layout);
       }}
