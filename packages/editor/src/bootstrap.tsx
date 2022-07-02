@@ -2,11 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-02 10:50:38
+ * @LastEditTime: 2022-07-02 18:10:44
  */
 
 import React, { useContext, useRef, useState } from 'react';
 import {
+  MessageArgsProps,
   Button, ButtonProps, Input, InputProps, Layout,
 } from 'antd';
 import { createRoot } from 'react-dom/client';
@@ -51,18 +52,40 @@ register<ButtonProps>({
       description: '按钮文字',
       type: String,
       default: 'Button',
+      required: true,
     },
     {
       name: 'onClick',
       description: '点击动作',
-      type: Function,
-      default: () => {},
+      type: Array,
+      default: '',
+      options: [
+        {
+          label: '提示',
+          value: 'message',
+          xProps: [
+            {
+              name: 'xProps.onClick.message.content',
+              description: '提示内容',
+              type: String,
+              default: '提示内容',
+              required: true,
+            },
+          ],
+        },
+        {
+          label: '弹窗',
+          value: 'modal',
+        },
+      ],
+      required: true,
     },
     {
       name: 'block',
       description: '将按钮宽度调整为其父宽度的选项',
       type: Boolean,
       default: false,
+      required: false,
     },
   ],
 });
@@ -87,6 +110,27 @@ register<InputProps>({
   },
   preview() {
     return <Input placeholder="请输入" />;
+  },
+});
+
+register<MessageArgsProps>({
+  label: 'Message',
+  key: 'message',
+  props: [
+    {
+      name: 'content',
+      description: '提示内容',
+      type: String,
+      default: 'balabala',
+      required: true,
+    },
+  ],
+  render(props?) {
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return <Input placeholder="请输入" {...props} />;
+  },
+  preview() {
+    return <> </>;
   },
 });
 
