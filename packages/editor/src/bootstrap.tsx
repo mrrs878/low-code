@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-01 10:19:19
+ * @LastEditTime: 2022-07-02 10:50:38
  */
 
 import React, { useContext, useRef, useState } from 'react';
@@ -97,7 +97,21 @@ function App() {
 
   return (
     <Layout className="editor">
-      <Sider theme="light" className="resize">
+      <Sider theme="light" width={300}>
+        <Material onDrop={(c) => { dragComponentRef.current = c; }} />
+      </Sider>
+      <Content className="editor-content">
+        <Tool />
+        <Canvas
+          dragComponentRef={dragComponentRef}
+          onSelect={(c) => {
+            console.log('[Canvas] onSelectComponent', c);
+            setSelectedComponent(c);
+          }}
+          selectedComponent={selectedComponent}
+        />
+      </Content>
+      <Sider theme="light" width={300}>
         <Operator
           component={selectedComponent}
           onSave={(u, p) => {
@@ -113,20 +127,6 @@ function App() {
             deleteComponent(c);
           }}
         />
-      </Sider>
-      <Content className="editor-content">
-        <Tool />
-        <Canvas
-          dragComponentRef={dragComponentRef}
-          onSelect={(c) => {
-            console.log('[Canvas] onSelectComponent', c);
-            setSelectedComponent(c);
-          }}
-          selectedComponent={selectedComponent}
-        />
-      </Content>
-      <Sider theme="light" width={300}>
-        <Material onDrop={(c) => { dragComponentRef.current = c; }} />
       </Sider>
     </Layout>
   );
