@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-28 21:36:45
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 11:50:04
+ * @LastEditTime: 2022-07-03 10:58:44
  */
 
 import { ImportOutlined, UploadOutlined } from '@ant-design/icons';
@@ -70,7 +70,7 @@ const Import = () => {
           onMount={(editor) => { editorRef.current = editor; }}
         />
       </Modal>
-      <Button icon={<ImportOutlined />} style={{ marginRight: 8 }} onClick={open}>导入</Button>
+      <Button icon={<ImportOutlined />} onClick={open}>导入</Button>
     </>
   );
 };

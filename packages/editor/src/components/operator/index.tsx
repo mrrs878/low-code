@@ -2,12 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 10:54:01
+ * @LastEditTime: 2022-07-03 17:49:10
  */
 
 import {
   Alert, Form, Input, Collapse, Switch, Divider, Typography, Row, Col, Button, message,
-  Select, Drawer, Space,
+  Select, Drawer,
 } from 'antd';
 import { keys } from 'ramda';
 import React, {
@@ -25,7 +25,7 @@ const setByPath = (obj: any, path: string, value: any) => {
     if (index === path.split('.').length - 1) {
       acc[cur] = value;
     } else {
-      acc[cur] = {};
+      acc[cur] ||= {};
     }
     return acc[cur];
   }, obj);
@@ -37,10 +37,12 @@ interface IProps {
   onDelete: (uuid: Component['uuid']) => void;
 }
 
-const renderOption = (prop: any, { onSelect }: any) => {
+const renderOption = (prop: any, config: any = {}) => {
   if (!prop) {
     return <> </>;
   }
+
+  const { onSelect = () => {} } = config;
 
   let Option;
   let valuePropName = 'value';
@@ -108,13 +110,13 @@ const Operator: FC<IProps> = ({
   const onSelect = (propIndex: number, optIndex: number) => {
     console.log('[Operator] onSelect', propIndex, optIndex);
     contextRenderRef.current = (component?.props?.[propIndex]?.options?.[optIndex] as any)?.xProps;
-    setShowXProps(true);
+    setShowXProps(!!contextRenderRef.current);
   };
 
   return (
     <div className="editor-operator">
       <Alert message="属性编辑" type="success" />
-      <Collapse className="editor-operator-collapse" defaultActiveKey={['2']}>
+      <Collapse className="editor-operator-collapse" defaultActiveKey={['2']} bordered={false}>
         <Panel header="画布" key="1">
           <Row gutter={16}>
             <Col>
@@ -129,21 +131,30 @@ const Operator: FC<IProps> = ({
             </Col>
           </Row>
         </Panel>
-        <Panel className="editor-operator-component" header="组件属性" key="3">
+        <Panel className="editor-operator-component" header="组件属性" key="2">
           {
             component
               ? (
                 <Form
                   form={form}
                   onFinish={() => {
-                    console.log('[onFinish]', form.getFieldsValue(), component.uuid);
-                    const values = form.getFieldsValue();
-
-                    component.props?.forEach((prop) => {
-                      // eslint-disable-next-line no-param-reassign
-                      prop.value = values[prop.name];
+                    const propsMap = form.getFieldsValue();
+                    const xPropsTmp = xPropsForm.getFieldsValue();
+                    const xProps = {};
+                    keys(xPropsTmp).forEach((key) => {
+                      setByPath(xProps, key as string, xPropsTmp[key]);
                     });
-
+                    console.log('[onFinish]', propsMap, form.getFieldsValue(), component.uuid);
+                    onSave(component.uuid, { propsMap, xProps })
+                      .then((res) => {
+                        message.info(res);
+                      }).catch((err) => {
+                        message.error(err);
+                      });
+                  }}
+                  onReset={() => {
+                    const values = form.getFieldsValue();
+                    console.log('[onReset]', form.getFieldsValue());
                     onSave(component.uuid, { propsMap: values })
                       .then((res) => {
                         message.info(res);
@@ -191,26 +202,8 @@ const Operator: FC<IProps> = ({
                 layout="vertical"
                 form={xPropsForm}
                 initialValues={props2propsMap(contextRenderRef.current)}
-                onFinish={(e) => {
-                  const xProps = {};
-                  const propsMap = form.getFieldsValue();
-                  keys(e).forEach((key) => {
-                    setByPath(xProps, key as string, e[key]);
-                  });
-                  onSave(component?.uuid, { xProps, propsMap })
-                    .then((res) => {
-                      message.info(res);
-                    }).catch((err) => {
-                      message.error(err);
-                    });
-                  closeXPropsDrawer();
-                }}
               >
-                {contextRenderRef.current?.map?.((props: any) => renderOption(props, { onSelect }))}
-                <Space>
-                  <Button htmlType="reset">重置</Button>
-                  <Button type="primary" htmlType="submit">保存</Button>
-                </Space>
+                {contextRenderRef.current?.map?.((props: any) => renderOption(props))}
               </Form>
             ) : (
               <Typography.Text type="secondary">空空如也～</Typography.Text>

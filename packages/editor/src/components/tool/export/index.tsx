@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-28 20:39:29
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:04:33
+ * @LastEditTime: 2022-07-03 16:53:26
  */
 
 import React, { FC, useContext, useState } from 'react';
@@ -37,6 +37,8 @@ const Export: FC = () => {
           type: 'link',
         }}
         onCancel={close}
+        cancelText="关闭"
+        okText="导出"
       >
         <DiffEditor
           height="60vh"

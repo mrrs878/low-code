@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 10:54:38
+ * @LastEditTime: 2022-07-03 16:57:37
  */
 
 import React, { useContext, useRef, useState } from 'react';
@@ -58,7 +58,7 @@ register<ButtonProps>({
       name: 'onClick',
       description: '点击动作',
       type: Array,
-      default: '',
+      default: '_',
       options: [
         {
           label: '提示',
@@ -71,11 +71,40 @@ register<ButtonProps>({
               default: '提示内容',
               required: true,
             },
+            {
+              name: 'onClick.type',
+              description: '提示类型',
+              type: Array,
+              default: 'info',
+              required: false,
+              options: [
+                {
+                  label: 'info',
+                  value: 'info',
+                },
+                {
+                  label: 'success',
+                  value: 'success',
+                },
+                {
+                  label: 'error',
+                  value: 'error',
+                },
+                {
+                  label: 'warning',
+                  value: 'warning',
+                },
+              ],
+            },
           ],
         },
         {
           label: '弹窗',
           value: 'modal',
+        },
+        {
+          label: '无',
+          value: '_',
         },
       ],
       required: true,
