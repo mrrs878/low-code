@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:21
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 10:45:21
+ * @LastEditTime: 2022-07-03 20:32:37
  */
 
 import { createContext } from 'react';
@@ -10,7 +10,7 @@ import { Component } from 'Components/material/registry';
 import { Layout } from 'react-grid-layout';
 
 type Grid = {
-  w: number, h: number, x: number, y: number
+  w: number, h: number, x: number, y: number, i: string;
 };
 
 type Schema = Array<{

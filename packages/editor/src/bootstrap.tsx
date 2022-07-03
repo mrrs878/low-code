@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 16:57:37
+ * @LastEditTime: 2022-07-03 17:58:59
  */
 
 import React, { useContext, useRef, useState } from 'react';
@@ -46,6 +46,7 @@ register<ButtonProps>({
   preview() {
     return <Button>Button</Button>;
   },
+  resizable: false,
   props: [
     {
       name: 'value',

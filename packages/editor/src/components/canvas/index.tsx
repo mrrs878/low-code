@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 16:23:02
+ * @LastEditTime: 2022-07-03 21:10:18
  */
 
 import React, {
@@ -62,7 +62,11 @@ const Canvas: FC<IProps> = ({
             <div
               className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
               key={modifiedSchema[index].uuid}
-              data-grid={modifiedSchema[index].grid}
+              data-grid={{
+                ...modifiedSchema[index].grid,
+                isBounded: true,
+                isResizable: component.resizable ?? true,
+              }}
               role="presentation"
               onClick={(e) => {
                 e.preventDefault();

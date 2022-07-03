@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 13:34:38
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-02 18:10:19
+ * @LastEditTime: 2022-07-03 17:58:58
  */
 
 import React from 'react';
@@ -32,6 +32,7 @@ export interface Component<T = any> {
   props?: Array<ComponentProp<T, keyof T>>;
   xProps?: any;
   propsMap?: { [key: string]: any };
+  resizable?: boolean;
 }
 
 const components: Array<Component> = [];

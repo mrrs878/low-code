@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-07-03 10:56:28
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 17:21:28
+ * @LastEditTime: 2022-07-03 21:24:15
  */
 
 import React, { useContext, useState } from 'react';
@@ -36,13 +36,15 @@ const Preview = () => {
             <FundViewOutlined />
           </span>
         )}
+        destroyOnClose
       >
         {
           visible && (
             <ResponsiveReactGridLayout
               cols={{
-                lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
+                lg: 17, md: 10, sm: 6, xs: 4, xxs: 2,
               }}
+              margin={[10, 10]}
               rowHeight={32}
               isDraggable={false}
               isResizable={false}

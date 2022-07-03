@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:17
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 10:45:45
+ * @LastEditTime: 2022-07-03 20:33:46
  */
 
 import { clone } from 'ramda';
@@ -46,7 +46,7 @@ const Provider: FC<any> = ({
       if (!s) {
         return pre;
       }
-      s.grid = assignGridFromLayout(l);
+      s.grid = assignGridFromLayout(l, s.uuid);
       return pre;
     });
   }, []);
