@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 14:33:18
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 23:31:07
+ * @LastEditTime: 2022-07-03 10:47:11
  */
 
 import { Component } from 'Components/material/registry';
@@ -31,6 +31,7 @@ export function assignSchemaFromComponent(c: Component, l = DEFAULT_LAYOUT): Sch
     type: c.key,
     uuid: c.uuid!,
     props: c.propsMap,
+    xProps: c.xProps,
     grid: assignGridFromLayout(l),
   };
 }

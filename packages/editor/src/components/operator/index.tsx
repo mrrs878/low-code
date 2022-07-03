@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-02 23:18:57
+ * @LastEditTime: 2022-07-03 10:54:01
  */
 
 import {
@@ -33,7 +33,7 @@ const setByPath = (obj: any, path: string, value: any) => {
 
 interface IProps {
   component: Component | undefined;
-  onSave: (uuid: Component['uuid'], propsMap: Component['propsMap']) => Promise<string>;
+  onSave: (uuid: Component['uuid'], propsMap: Pick<Component, 'propsMap' | 'xProps'>) => Promise<string>;
   onDelete: (uuid: Component['uuid']) => void;
 }
 
@@ -144,7 +144,7 @@ const Operator: FC<IProps> = ({
                       prop.value = values[prop.name];
                     });
 
-                    onSave(component.uuid, values)
+                    onSave(component.uuid, { propsMap: values })
                       .then((res) => {
                         message.info(res);
                       }).catch((err) => {
@@ -192,12 +192,12 @@ const Operator: FC<IProps> = ({
                 form={xPropsForm}
                 initialValues={props2propsMap(contextRenderRef.current)}
                 onFinish={(e) => {
-                  const values = form.getFieldsValue();
+                  const xProps = {};
+                  const propsMap = form.getFieldsValue();
                   keys(e).forEach((key) => {
-                    setByPath(values, key as string, e[key]);
+                    setByPath(xProps, key as string, e[key]);
                   });
-
-                  onSave(component?.uuid, values)
+                  onSave(component?.uuid, { xProps, propsMap })
                     .then((res) => {
                       message.info(res);
                     }).catch((err) => {

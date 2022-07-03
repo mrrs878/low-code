@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:21
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 20:17:08
+ * @LastEditTime: 2022-07-03 10:45:21
  */
 
 import { createContext } from 'react';
@@ -17,6 +17,7 @@ type Schema = Array<{
   type: string;
   uuid: string;
   props: Component['propsMap'];
+  xProps: Component['xProps'];
   grid: Grid;
 }>;
 
@@ -27,7 +28,7 @@ interface IStateContext {
 
 interface IDispatchContext {
   importSchema: (content: string) => void;
-  updateComponent: (u: Component['uuid'], p: Component['propsMap']) => void;
+  updateComponentProps: (u: Component['uuid'], p: Pick<Component, 'propsMap' | 'xProps'>) => void;
   dragComponent: (u: Component['uuid'], l: Layout) => void;
   addComponent: (c: Component, l: Layout) => void;
   deleteComponent: (u: Schema[0]['uuid'] | undefined) => void;
@@ -40,7 +41,7 @@ const DefaultStateContext: IStateContext = {
 
 const DefaultDispatchContext: IDispatchContext = {
   importSchema: () => {},
-  updateComponent: () => {},
+  updateComponentProps: () => {},
   addComponent: () => {},
   dragComponent: () => {},
   deleteComponent: () => {},

@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:17
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-01 19:38:22
+ * @LastEditTime: 2022-07-03 10:45:45
  */
 
 import { clone } from 'ramda';
@@ -26,14 +26,15 @@ const Provider: FC<any> = ({
     setModified(JSON.parse(schema || '{}'));
   }, []);
 
-  const updateComponent = useCallback<IDispatchContext['updateComponent']>((u, p) => {
+  const updateComponentProps = useCallback<IDispatchContext['updateComponentProps']>((u, p) => {
     setModified((_pre) => {
       const pre = clone(_pre);
       const s = pre.find((item) => item.uuid === u);
       if (!s) {
         return pre;
       }
-      s.props = p;
+      s.props = p.propsMap || s.props;
+      s.xProps = p.xProps || s.xProps;
       return pre;
     });
   }, []);
@@ -69,11 +70,11 @@ const Provider: FC<any> = ({
 
   const dispatch = useMemo<IDispatchContext>(() => ({
     importSchema,
-    updateComponent,
+    updateComponentProps,
     deleteComponent,
     addComponent,
     dragComponent,
-  }), [addComponent, deleteComponent, dragComponent, importSchema, updateComponent]);
+  }), [addComponent, deleteComponent, dragComponent, importSchema, updateComponentProps]);
 
   return (
     <StateContext.Provider value={state}>

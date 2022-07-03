@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-02 18:10:44
+ * @LastEditTime: 2022-07-03 10:54:38
  */
 
 import React, { useContext, useRef, useState } from 'react';
@@ -65,7 +65,7 @@ register<ButtonProps>({
           value: 'message',
           xProps: [
             {
-              name: 'xProps.onClick.message.content',
+              name: 'onClick.content',
               description: '提示内容',
               type: String,
               default: '提示内容',
@@ -135,7 +135,7 @@ register<MessageArgsProps>({
 });
 
 function App() {
-  const { updateComponent, deleteComponent } = useContext(DispatchContext);
+  const { updateComponentProps: updateComponent, deleteComponent } = useContext(DispatchContext);
   const [selectedComponent, setSelectedComponent] = useState<Component>();
   const dragComponentRef = useRef<Component | null>(null);
 
