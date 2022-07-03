@@ -2,10 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 18:11:13
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-30 21:31:23
+ * @LastEditTime: 2022-07-03 16:22:38
  */
 
-import { Component } from 'Components/material/registry';
+import { clone } from 'ramda';
+import { Component, componentMap } from 'Components/material/registry';
+import { Schema } from 'Store/context';
 
 /**
  * 快速生成uuid
@@ -26,4 +28,12 @@ export function uuid() {
  */
 export function props2propsMap(props: Component['props']): Component['propsMap'] {
   return props?.reduce((acc, cur) => ({ ...acc, [cur.name]: cur.value || cur.default }), {});
+}
+
+export function schema2components(schema: Schema) {
+  return schema.map((item) => ({
+    ...item,
+    ...clone(componentMap[item.type]),
+    propsMap: item.props || props2propsMap(componentMap[item.type].props),
+  })) as Array<Component>;
 }

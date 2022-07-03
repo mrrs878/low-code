@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-01 19:55:36
+ * @LastEditTime: 2022-07-03 16:23:02
  */
 
 import React, {
@@ -10,24 +10,15 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 import { WidthProvider, Responsive } from 'react-grid-layout';
-import { clone } from 'ramda';
-import { DispatchContext, Schema, StateContext } from 'Store/context';
+import { DispatchContext, StateContext } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
-import { Component, componentMap } from 'Components/material/registry';
-import { props2propsMap } from 'Utils/index';
+import { Component } from 'Components/material/registry';
+import { schema2components } from 'Utils/index';
 import './index.less';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
-
-function schema2components(schema: Schema) {
-  return schema.map((item) => ({
-    ...item,
-    ...clone(componentMap[item.type]),
-    propsMap: item.props || props2propsMap(componentMap[item.type].props),
-  })) as Array<Component>;
-}
 
 interface IProps {
   dragComponentRef: MutableRefObject<Component | null>;
