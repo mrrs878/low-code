@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:17
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 20:33:46
+ * @LastEditTime: 2022-07-04 22:14:02
  */
 
 import { clone } from 'ramda';
@@ -10,7 +10,7 @@ import React, {
   FC, useCallback, useMemo, useState,
 } from 'react';
 import {
-  StateContext, DispatchContext, IStateContext, IDispatchContext,
+  StateContext, DispatchContext, IStateContext, IDispatchContext, DefaultStateContext,
 } from 'Store/context';
 import { uuid as generateUUID } from 'Utils/index';
 import { assignGridFromLayout, assignSchemaFromComponent } from './tool';
@@ -18,8 +18,8 @@ import { assignGridFromLayout, assignSchemaFromComponent } from './tool';
 const Provider: FC<any> = ({
   children,
 }) => {
-  const [original, setOriginal] = useState<IStateContext['originalSchema']>([]);
-  const [modified, setModified] = useState<IStateContext['modifiedSchema']>([]);
+  const [original, setOriginal] = useState<IStateContext['originalSchema']>(DefaultStateContext.originalSchema);
+  const [modified, setModified] = useState<IStateContext['modifiedSchema']>(DefaultStateContext.modifiedSchema);
 
   const importSchema = useCallback((schema: string) => {
     setOriginal(JSON.parse(schema || '{}'));
@@ -35,6 +35,7 @@ const Provider: FC<any> = ({
       }
       s.props = p.propsMap || s.props;
       s.xProps = p.xProps || s.xProps;
+      s.grid = p.grid || s.grid;
       return pre;
     });
   }, []);
@@ -46,7 +47,7 @@ const Provider: FC<any> = ({
       if (!s) {
         return pre;
       }
-      s.grid = assignGridFromLayout(l, s.uuid);
+      s.grid = assignGridFromLayout(l);
       return pre;
     });
   }, []);

@@ -1,22 +1,28 @@
 /*
  * @Author: mrrs878@foxmail.com
+ * @Date: 2022-07-04 10:28:59
+ * @LastEditors: mrrs878@foxmail.com
+ * @LastEditTime: 2022-07-04 10:28:59
+ */
+/*
+ * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-04 22:20:19
+ * @LastEditTime: 2022-07-03 21:10:18
  */
 
 import React, {
-  FC, MutableRefObject, useContext, useRef,
+  FC, MutableRefObject, useContext,
 } from 'react';
 import classNames from 'classnames';
-import Draggable from 'react-draggable';
-import throttle from 'lodash.throttle';
+import { WidthProvider, Responsive } from 'react-grid-layout';
 import { DispatchContext, StateContext } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
 import { Component } from 'Components/material/registry';
 import { schema2components } from 'Utils/index';
 import './index.less';
-import debounce from 'lodash.debounce';
+
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
@@ -36,39 +42,29 @@ const Canvas: FC<IProps> = ({
 
   const components = schema2components(modifiedSchema);
 
-  const canvas = useRef<HTMLDivElement | null>(null);
-
   console.log('[Canvas] render schema', modifiedSchema, components);
   return (
-    <div
-      className="editor-canvas"
-      onDragEnter={(e) => {
-        console.log('[onDrop]', e.clientX, e.clientY);
-        e.dataTransfer.dropEffect = 'move';
+    <ResponsiveReactGridLayout
+      cols={{
+        lg: 12, md: 10, sm: 6, xs: 4, xxs: 2,
       }}
-      ref={canvas}
-      role="presentation"
-      onClick={() => { onSelect(); }}
-      onDragOver={debounce((e) => {
-        console.log('[onDrop onDragOver]', e, e.clientX - (canvas.current?.offsetLeft || 0));
-        const x = e.clientX - (canvas.current?.offsetLeft || 0);
-        const y = e.clientY - (canvas.current?.offsetTop || 0);
-        addComponent(dragComponentRef.current!, {
-          x, y, w: 1, h: 1, i: dragComponentRef.current?.uuid || '',
-        });
-      }, 100)}
+      className={classNames('editor-canvas')}
+      rowHeight={32}
+      isDroppable
+      measureBeforeMount={false}
+      useCSSTransforms={false}
+      verticalCompact={false}
+      onDragStop={(_, __, layout) => {
+        console.log('[Canvas] onDragStop', layout);
+        dragComponent(layout.i, layout);
+      }}
+      onDrop={(_, l) => {
+        console.log('[Canvas] onDrop', l);
+        addComponent(dragComponentRef.current!, l);
+      }}
     >
       {
-        components.map((component, index) => (
-          <Draggable
-            grid={[10, 20]}
-            bounds=".editor-canvas"
-            position={{ x: modifiedSchema[index].grid.x, y: modifiedSchema[index].grid.y }}
-            offsetParent={document.querySelector<HTMLDivElement>('.editor-canvas') || undefined}
-            onDrag={throttle((_, data) => {
-              dragComponent(component.uuid, data);
-            })}
-          >
+          components.map((component, index) => (
             <div
               className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
               key={modifiedSchema[index].uuid}
@@ -95,10 +91,9 @@ const Canvas: FC<IProps> = ({
                 {component.render(component.propsMap)}
               </div>
             </div>
-          </Draggable>
-        ))
-      }
-    </div>
+          ))
+        }
+    </ResponsiveReactGridLayout>
   );
 };
 

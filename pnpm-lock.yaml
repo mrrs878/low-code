@@ -19,6 +19,8 @@ importers:
       '@babel/preset-react': ^7.17.12
       '@monaco-editor/react': ^4.4.5
       '@pmmmwh/react-refresh-webpack-plugin': ^0.5.7
+      '@types/lodash.debounce': ^4.0.7
+      '@types/lodash.throttle': ^4.1.7
       '@types/node': ^18.0.0
       '@types/ramda': ^0.28.14
       '@types/react': ^18.0.14
@@ -41,10 +43,13 @@ importers:
       html-webpack-plugin: ^5.5.0
       less: ^4.1.3
       less-loader: ^11.0.0
+      lodash.debounce: ^4.0.8
+      lodash.throttle: ^4.1.1
       monaco-editor: ^0.33.0
       ramda: ^0.28.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-draggable: ^4.4.5
       react-grid-layout: ^1.3.4
       react-refresh: ^0.14.0
       style-loader: ^3.3.1
@@ -58,10 +63,13 @@ importers:
       '@monaco-editor/react': registry.npmjs.org/@monaco-editor/react/4.4.5_jywyd5ymizla4bkdnod6po6m6y
       antd: registry.npmjs.org/antd/4.21.3_biqbaboplfbrettd7655fr4n2y
       classnames: registry.npmjs.org/classnames/2.3.1
+      lodash.debounce: registry.npmjs.org/lodash.debounce/4.0.8
+      lodash.throttle: registry.npmjs.org/lodash.throttle/4.1.1
       monaco-editor: registry.npmjs.org/monaco-editor/0.33.0
       ramda: registry.npmjs.org/ramda/0.28.0
       react: registry.npmjs.org/react/18.2.0
       react-dom: registry.npmjs.org/react-dom/18.2.0_react@18.2.0
+      react-draggable: registry.npmjs.org/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y
       react-grid-layout: registry.npmjs.org/react-grid-layout/1.3.4_biqbaboplfbrettd7655fr4n2y
       react-refresh: registry.npmjs.org/react-refresh/0.14.0
       typescript: registry.npmjs.org/typescript/4.7.4
@@ -69,6 +77,8 @@ importers:
       '@babel/core': registry.npmjs.org/@babel/core/7.18.5
       '@babel/preset-react': registry.npmjs.org/@babel/preset-react/7.17.12_@babel+core@7.18.5
       '@pmmmwh/react-refresh-webpack-plugin': registry.npmjs.org/@pmmmwh/react-refresh-webpack-plugin/0.5.7_g5otyhka3xgu4m6o2r25nvx6tm
+      '@types/lodash.debounce': registry.npmjs.org/@types/lodash.debounce/4.0.7
+      '@types/lodash.throttle': registry.npmjs.org/@types/lodash.throttle/4.1.7
       '@types/node': registry.npmjs.org/@types/node/18.0.0
       '@types/ramda': registry.npmjs.org/@types/ramda/0.28.14
       '@types/react': registry.npmjs.org/@types/react/18.0.14
@@ -1078,6 +1088,28 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz}
     name: '@types/json5'
     version: 0.0.29
+    dev: true
+
+  registry.npmjs.org/@types/lodash.debounce/4.0.7:
+    resolution: {integrity: sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/lodash.debounce/-/lodash.debounce-4.0.7.tgz}
+    name: '@types/lodash.debounce'
+    version: 4.0.7
+    dependencies:
+      '@types/lodash': registry.npmjs.org/@types/lodash/4.14.182
+    dev: true
+
+  registry.npmjs.org/@types/lodash.throttle/4.1.7:
+    resolution: {integrity: sha512-znwGDpjCHQ4FpLLx19w4OXDqq8+OvREa05H89obtSyXyOFKL3dDjCslsmfBz0T2FU8dmf5Wx1QvogbINiGIu9g==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/lodash.throttle/-/lodash.throttle-4.1.7.tgz}
+    name: '@types/lodash.throttle'
+    version: 4.1.7
+    dependencies:
+      '@types/lodash': registry.npmjs.org/@types/lodash/4.14.182
+    dev: true
+
+  registry.npmjs.org/@types/lodash/4.14.182:
+    resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/lodash/-/lodash-4.14.182.tgz}
+    name: '@types/lodash'
+    version: 4.14.182
     dev: true
 
   registry.npmjs.org/@types/mime/1.3.2:
@@ -4601,6 +4633,12 @@ packages:
       p-locate: registry.npmjs.org/p-locate/5.0.0
     dev: true
 
+  registry.npmjs.org/lodash.debounce/4.0.8:
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz}
+    name: lodash.debounce
+    version: 4.0.8
+    dev: false
+
   registry.npmjs.org/lodash.isequal/4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz}
     name: lodash.isequal
@@ -4612,6 +4650,12 @@ packages:
     name: lodash.merge
     version: 4.6.2
     dev: true
+
+  registry.npmjs.org/lodash.throttle/4.1.1:
+    resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz}
+    name: lodash.throttle
+    version: 4.1.1
+    dev: false
 
   registry.npmjs.org/lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz}

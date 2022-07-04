@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 17:49:10
+ * @LastEditTime: 2022-07-04 22:19:47
  */
 
 import {
@@ -33,7 +33,7 @@ const setByPath = (obj: any, path: string, value: any) => {
 
 interface IProps {
   component: Component | undefined;
-  onSave: (uuid: Component['uuid'], propsMap: Pick<Component, 'propsMap' | 'xProps'>) => Promise<string>;
+  onSave: (uuid: Component['uuid'], propsMap: Pick<Component, 'propsMap' | 'xProps' | 'grid'>) => Promise<string>;
   onDelete: (uuid: Component['uuid']) => void;
 }
 
@@ -97,13 +97,13 @@ const Operator: FC<IProps> = ({
   const [showXProps, setShowXProps] = useState(false);
   const contextRenderRef = useRef<Array<any>>([]);
 
-  console.log('[Operator] component', component?.propsMap);
+  console.log('[Operator] component', component);
 
   useEffect(() => {
     if (component?.propsMap) {
-      form.setFieldsValue(component?.propsMap);
+      form.setFieldsValue({ ...component?.propsMap, x: component.grid?.x, y: component.grid?.y });
     }
-  }, [component?.propsMap, form]);
+  }, [component?.grid, component?.propsMap, form]);
 
   const closeXPropsDrawer = () => setShowXProps(false);
 
@@ -144,8 +144,12 @@ const Operator: FC<IProps> = ({
                     keys(xPropsTmp).forEach((key) => {
                       setByPath(xProps, key as string, xPropsTmp[key]);
                     });
+                    const { x, y } = propsMap;
                     console.log('[onFinish]', propsMap, form.getFieldsValue(), component.uuid);
-                    onSave(component.uuid, { propsMap, xProps })
+                    onSave(
+                      component.uuid,
+                      { propsMap, xProps, grid: { x: Number(x), y: Number(y) } },
+                    )
                       .then((res) => {
                         message.info(res);
                       }).catch((err) => {
@@ -164,6 +168,12 @@ const Operator: FC<IProps> = ({
                   }}
                   initialValues={component?.propsMap}
                 >
+                  <Form.Item name="x" label="x" required initialValue={component.grid?.x}>
+                    <Input type="number" />
+                  </Form.Item>
+                  <Form.Item name="y" label="y" required initialValue={component.grid?.y}>
+                    <Input type="number" />
+                  </Form.Item>
                   {
                     component.props?.map?.((props, index) => renderOption(
                       props,

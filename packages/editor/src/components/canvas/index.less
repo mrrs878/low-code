@@ -10,26 +10,12 @@
   border: 1px solid #f00;
   padding: 10px;
   min-height: 300px;
-  display: flex;
-  flex-direction: column;
   position: relative;
 
   .react-grid-layout {
     width: 100%;
   }
   
-  .react-grid-item {
-    &:hover {
-      box-shadow: 0px 0px 5px #ccc;
-    }
-    &:active {
-      border: 1px solid #f00;
-    }
-    &.active {
-      border: 1px solid #f00;
-    }
-  }
-
   &.remove {
     .react-grid-placeholder {
       opacity: 0;
@@ -37,8 +23,19 @@
   }
 
   &-item {
-    position: relative;
+    position: absolute;
     z-index: 2;
+    float: left;
+    width: max-content;
+    &.active {
+      border: 1px solid #f00;
+    }
+    &:hover {
+      box-shadow: 0px 0px 5px #ccc;
+    }
+    &:active {
+      border: 1px solid #f00;
+    }
   }
   &-item__mask {
     position: relative;

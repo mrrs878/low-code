@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 17:58:59
+ * @LastEditTime: 2022-07-04 22:15:59
  */
 
 import React, { useContext, useRef, useState } from 'react';
@@ -189,7 +189,7 @@ function App() {
         <Operator
           component={selectedComponent}
           onSave={(u, p) => {
-            console.log('[Operator] onSave');
+            console.log('[Operator] onSave', p);
             if (!u) {
               return Promise.reject(new Error('组件不存在'));
             }

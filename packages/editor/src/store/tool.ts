@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 14:33:18
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-03 20:33:09
+ * @LastEditTime: 2022-07-04 22:11:58
  */
 
 import { Component } from 'Components/material/registry';
@@ -17,13 +17,10 @@ const DEFAULT_LAYOUT: Layout = {
   i: Date.now().toString(),
 };
 
-export function assignGridFromLayout(layout: Layout, i: Grid['i']): Grid {
+export function assignGridFromLayout(layout: Layout): Grid {
   return {
     x: layout.x,
     y: layout.y,
-    w: layout.w,
-    h: layout.h,
-    i,
   };
 }
 
@@ -33,6 +30,6 @@ export function assignSchemaFromComponent(c: Component, l = DEFAULT_LAYOUT): Sch
     uuid: c.uuid!,
     props: c.propsMap,
     xProps: c.xProps,
-    grid: assignGridFromLayout(l, c.uuid!),
+    grid: assignGridFromLayout(l),
   };
 }
