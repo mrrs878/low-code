@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-04 22:20:19
+ * @LastEditTime: 2022-07-05 10:26:37
  */
 
 import React, {
@@ -11,12 +11,13 @@ import React, {
 import classNames from 'classnames';
 import Draggable from 'react-draggable';
 import throttle from 'lodash.throttle';
+import debounce from 'lodash.debounce';
 import { DispatchContext, StateContext } from 'Store/context';
 import 'react-grid-layout/css/styles.css';
 import { Component } from 'Components/material/registry';
 import { schema2components } from 'Utils/index';
+import { GRID } from 'Config/index';
 import './index.less';
-import debounce from 'lodash.debounce';
 
 export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
@@ -61,7 +62,7 @@ const Canvas: FC<IProps> = ({
       {
         components.map((component, index) => (
           <Draggable
-            grid={[10, 20]}
+            grid={GRID}
             bounds=".editor-canvas"
             position={{ x: modifiedSchema[index].grid.x, y: modifiedSchema[index].grid.y }}
             offsetParent={document.querySelector<HTMLDivElement>('.editor-canvas') || undefined}

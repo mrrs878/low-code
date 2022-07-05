@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:08:22
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-06-29 11:47:23
+ * @LastEditTime: 2022-07-05 10:25:56
  */
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -71,6 +71,7 @@ module.exports = {
       Store: path.resolve(__dirname, './src/store'),
       Utils: path.resolve(__dirname, './src/utils'),
       Hooks: path.resolve(__dirname, './src/hooks'),
+      Config: path.resolve(__dirname, './src/config'),
     },
   },
   devtool: 'source-map',
