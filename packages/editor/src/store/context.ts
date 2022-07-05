@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:21
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 20:48:09
+ * @LastEditTime: 2022-07-05 21:58:38
  */
 
 import { createContext } from 'react';
@@ -56,7 +56,7 @@ const DefaultStateContext: IStateContext = {
       uuid: 'ca308719-1eb5-4b28-89b2-03a3e7c202c0',
       props: {
         value: 'Button1111',
-        onClick: '_',
+        onClick: 'message',
         block: false,
       },
       grid: {
@@ -65,7 +65,12 @@ const DefaultStateContext: IStateContext = {
         w: 112,
         h: 32,
       },
-      xProps: {},
+      xProps: {
+        onClick: {
+          content: '1111',
+          type: 'error',
+        },
+      },
     },
   ] as Schema : [],
 };
