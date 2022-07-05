@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 10:26:37
+ * @LastEditTime: 2022-07-05 20:50:14
  */
 
 import React, {
@@ -23,8 +23,8 @@ export type CanvasRef = MutableRefObject<HTMLDivElement | null>;
 
 interface IProps {
   dragComponentRef: MutableRefObject<Component | null>;
-  onSelect: (component?: Component) => void;
-  selectedComponent: Component | undefined;
+  onSelect: (component?: Component['uuid']) => void;
+  selectedComponent: Component['uuid'];
 }
 
 const Canvas: FC<IProps> = ({
@@ -54,9 +54,14 @@ const Canvas: FC<IProps> = ({
         console.log('[onDrop onDragOver]', e, e.clientX - (canvas.current?.offsetLeft || 0));
         const x = e.clientX - (canvas.current?.offsetLeft || 0);
         const y = e.clientY - (canvas.current?.offsetTop || 0);
-        addComponent(dragComponentRef.current!, {
-          x, y, w: 1, h: 1, i: dragComponentRef.current?.uuid || '',
+
+        const { grid } = dragComponentRef.current!;
+
+        const u = addComponent(dragComponentRef.current!, {
+          x, y, w: grid?.w, h: grid?.h,
         });
+
+        onSelect(u);
       }, 100)}
     >
       {
@@ -64,14 +69,17 @@ const Canvas: FC<IProps> = ({
           <Draggable
             grid={GRID}
             bounds=".editor-canvas"
-            position={{ x: modifiedSchema[index].grid.x, y: modifiedSchema[index].grid.y }}
+            position={{ x: modifiedSchema[index].grid.x!, y: modifiedSchema[index].grid.y! }}
             offsetParent={document.querySelector<HTMLDivElement>('.editor-canvas') || undefined}
             onDrag={throttle((_, data) => {
-              dragComponent(component.uuid, data);
+              const { x, y } = data;
+              dragComponent(component.uuid, {
+                x, y,
+              });
             })}
           >
             <div
-              className={classNames('editor-canvas-item', { active: selectedComponent?.uuid === component.uuid })}
+              className={classNames('editor-canvas-item', { active: selectedComponent === component.uuid })}
               key={modifiedSchema[index].uuid}
               data-grid={{
                 ...modifiedSchema[index].grid,
@@ -83,15 +91,19 @@ const Canvas: FC<IProps> = ({
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('[Canvas] onClick', component, modifiedSchema[index]);
-                if (selectedComponent?.uuid === component.uuid) {
+                if (selectedComponent === component.uuid) {
                   onSelect();
                   return;
                 }
-                onSelect(component);
+                onSelect(component.uuid);
               }}
             >
               <div
                 className="editor-canvas-item__mask"
+                style={{
+                  width: component.resizable ? modifiedSchema[index].grid.w : 'unset',
+                  height: component.resizable ? modifiedSchema[index].grid.h : 'unset',
+                }}
               >
                 {component.render(component.propsMap)}
               </div>

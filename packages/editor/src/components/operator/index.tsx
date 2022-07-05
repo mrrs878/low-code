@@ -2,19 +2,20 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-04 22:19:47
+ * @LastEditTime: 2022-07-05 21:19:00
  */
 
 import {
   Alert, Form, Input, Collapse, Switch, Divider, Typography, Row, Col, Button, message,
-  Select, Drawer,
+  Select, Drawer, Space,
 } from 'antd';
-import { keys } from 'ramda';
+import { keys, omit } from 'ramda';
 import React, {
-  FC, useEffect, useRef, useState,
+  FC, useContext, useEffect, useRef, useState,
 } from 'react';
 import { props2propsMap } from 'Utils/index';
-import { Component, ComponentOption } from '../material/registry';
+import { Component, componentMap, ComponentOption } from 'Components/material/registry';
+import { DispatchContext, StateContext } from 'Store/context';
 import DeleteBtn from './components/Delete';
 import './index.less';
 
@@ -32,9 +33,7 @@ const setByPath = (obj: any, path: string, value: any) => {
 };
 
 interface IProps {
-  component: Component | undefined;
-  onSave: (uuid: Component['uuid'], propsMap: Pick<Component, 'propsMap' | 'xProps' | 'grid'>) => Promise<string>;
-  onDelete: (uuid: Component['uuid']) => void;
+  component: Component['uuid'];
 }
 
 const renderOption = (prop: any, config: any = {}) => {
@@ -88,22 +87,31 @@ const renderOption = (prop: any, config: any = {}) => {
 };
 
 const Operator: FC<IProps> = ({
-  component,
-  onSave,
-  onDelete,
+  component: c,
 }) => {
+  const { modifiedSchema } = useContext(StateContext);
+  const { updateComponentProps, deleteComponent } = useContext(DispatchContext);
   const [form] = Form.useForm();
   const [xPropsForm] = Form.useForm();
   const [showXProps, setShowXProps] = useState(false);
   const contextRenderRef = useRef<Array<any>>([]);
 
+  const schemaConfig = modifiedSchema.find((item) => item.uuid === c);
+  const component = componentMap[schemaConfig?.type || ''];
+
   console.log('[Operator] component', component);
 
   useEffect(() => {
-    if (component?.propsMap) {
-      form.setFieldsValue({ ...component?.propsMap, x: component.grid?.x, y: component.grid?.y });
+    if (schemaConfig) {
+      form.setFieldsValue({
+        ...schemaConfig?.props,
+        x: schemaConfig?.grid?.x,
+        y: schemaConfig?.grid?.y,
+        w: schemaConfig?.grid?.w,
+        h: schemaConfig?.grid?.h,
+      });
     }
-  }, [component?.grid, component?.propsMap, form]);
+  }, [form, schemaConfig]);
 
   const closeXPropsDrawer = () => setShowXProps(false);
 
@@ -138,42 +146,50 @@ const Operator: FC<IProps> = ({
                 <Form
                   form={form}
                   onFinish={() => {
-                    const propsMap = form.getFieldsValue();
-                    const xPropsTmp = xPropsForm.getFieldsValue();
-                    const xProps = {};
-                    keys(xPropsTmp).forEach((key) => {
-                      setByPath(xProps, key as string, xPropsTmp[key]);
-                    });
-                    const { x, y } = propsMap;
-                    console.log('[onFinish]', propsMap, form.getFieldsValue(), component.uuid);
-                    onSave(
-                      component.uuid,
-                      { propsMap, xProps, grid: { x: Number(x), y: Number(y) } },
-                    )
-                      .then((res) => {
-                        message.info(res);
-                      }).catch((err) => {
-                        message.error(err);
+                    try {
+                      const propsMap = form.getFieldsValue();
+                      const xPropsTmp = xPropsForm.getFieldsValue();
+                      const xProps = {};
+
+                      keys(xPropsTmp).forEach((key) => {
+                        setByPath(xProps, key as string, xPropsTmp[key]);
                       });
-                  }}
-                  onReset={() => {
-                    const values = form.getFieldsValue();
-                    console.log('[onReset]', form.getFieldsValue());
-                    onSave(component.uuid, { propsMap: values })
-                      .then((res) => {
-                        message.info(res);
-                      }).catch((err) => {
-                        message.error(err);
+
+                      const {
+                        x, y, w, h,
+                      } = propsMap;
+
+                      console.log('[onFinish]', propsMap, form.getFieldsValue(), component.uuid);
+                      updateComponentProps(schemaConfig?.uuid, {
+                        propsMap: omit(['x', 'y', 'w', 'h'], propsMap),
+                        xProps,
+                        grid: {
+                          x: Number(x), y: Number(y), w: Number(w), h: Number(h),
+                        },
                       });
+                      message.info('保存成功');
+                    } catch (e) {
+                      message.error(JSON.stringify(e));
+                    }
                   }}
-                  initialValues={component?.propsMap}
+                  initialValues={schemaConfig?.props}
                 >
-                  <Form.Item name="x" label="x" required initialValue={component.grid?.x}>
-                    <Input type="number" />
-                  </Form.Item>
-                  <Form.Item name="y" label="y" required initialValue={component.grid?.y}>
-                    <Input type="number" />
-                  </Form.Item>
+                  <Space>
+                    <Form.Item name="x" label="x" required initialValue={component.grid?.x}>
+                      <Input type="number" />
+                    </Form.Item>
+                    <Form.Item name="y" label="y" required initialValue={component.grid?.y}>
+                      <Input type="number" />
+                    </Form.Item>
+                  </Space>
+                  <Space>
+                    <Form.Item name="w" label="w" required initialValue={component.grid?.w}>
+                      <Input type="number" disabled={!component.resizable} />
+                    </Form.Item>
+                    <Form.Item name="h" label="h" required initialValue={component.grid?.h}>
+                      <Input type="number" disabled={!component.resizable} />
+                    </Form.Item>
+                  </Space>
                   {
                     component.props?.map?.((props, index) => renderOption(
                       props,
@@ -186,12 +202,16 @@ const Operator: FC<IProps> = ({
                     ))
                   }
                   <Divider />
-                  <Form.Item className="editor-operator-button-wrapper">
-                    <Button htmlType="reset" onClick={() => form.resetFields()}>重置</Button>
-                    <div style={{ flex: 1 }} />
-                    <DeleteBtn onConfirm={() => onDelete(component.uuid)} />
-                    <Button type="primary" htmlType="submit">保存</Button>
-                  </Form.Item>
+                  <Row justify="end">
+                    <Form.Item className="editor-operator-button-wrapper">
+                      <DeleteBtn
+                        onConfirm={() => {
+                          deleteComponent(schemaConfig?.uuid);
+                        }}
+                      />
+                      <Button type="primary" htmlType="submit">保存</Button>
+                    </Form.Item>
+                  </Row>
                 </Form>
               )
               : <Typography.Text type="secondary">空空如也～</Typography.Text>

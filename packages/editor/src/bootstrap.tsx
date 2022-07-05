@@ -2,10 +2,10 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-04 22:15:59
+ * @LastEditTime: 2022-07-05 21:11:08
  */
 
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   MessageArgsProps,
   Button, ButtonProps, Input, InputProps, Layout,
@@ -17,23 +17,9 @@ import Operator from 'Components/operator';
 import { Component } from 'Components/material/registry';
 import Tool from 'Components/tool';
 import Provider from 'Store/provider';
-import { DispatchContext } from 'Store/context';
 import './index.less';
 
 const { Sider, Content } = Layout;
-
-register({
-  label: 'Row',
-  key: 'row',
-  render() {
-    return <div style={{ height: '100%', background: '#ddd' }}> </div>;
-  },
-  preview() {
-    return (
-      <div>占位</div>
-    );
-  },
-});
 
 register<ButtonProps>({
   label: 'Button',
@@ -118,6 +104,10 @@ register<ButtonProps>({
       required: false,
     },
   ],
+  grid: {
+    w: 75,
+    h: 32,
+  },
 });
 
 register({
@@ -128,6 +118,10 @@ register({
   },
   preview() {
     return '文本';
+  },
+  grid: {
+    w: 30,
+    h: 24,
   },
 });
 
@@ -140,6 +134,11 @@ register<InputProps>({
   },
   preview() {
     return <Input placeholder="请输入" />;
+  },
+  resizable: true,
+  grid: {
+    w: 178,
+    h: 32,
   },
 });
 
@@ -162,11 +161,14 @@ register<MessageArgsProps>({
   preview() {
     return <> </>;
   },
+  grid: {
+    w: 100,
+    h: 32,
+  },
 });
 
 function App() {
-  const { updateComponentProps: updateComponent, deleteComponent } = useContext(DispatchContext);
-  const [selectedComponent, setSelectedComponent] = useState<Component>();
+  const [selectedComponent, setSelectedComponent] = useState<Component['uuid']>();
   const dragComponentRef = useRef<Component | null>(null);
 
   return (
@@ -188,18 +190,6 @@ function App() {
       <Sider theme="light" width={300}>
         <Operator
           component={selectedComponent}
-          onSave={(u, p) => {
-            console.log('[Operator] onSave', p);
-            if (!u) {
-              return Promise.reject(new Error('组件不存在'));
-            }
-            updateComponent(u, p);
-            return Promise.resolve('保存成功');
-          }}
-          onDelete={(c) => {
-            setSelectedComponent(undefined);
-            deleteComponent(c);
-          }}
         />
       </Sider>
     </Layout>

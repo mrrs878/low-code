@@ -2,15 +2,14 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:21
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-04 22:14:11
+ * @LastEditTime: 2022-07-05 20:48:09
  */
 
 import { createContext } from 'react';
 import { Component } from 'Components/material/registry';
-import { Layout } from 'react-grid-layout';
 
 type Grid = {
-  x: number, y: number
+  x?: number, y?: number, w: number, h: number;
 };
 
 type Schema = Array<{
@@ -29,8 +28,8 @@ interface IStateContext {
 interface IDispatchContext {
   importSchema: (content: string) => void;
   updateComponentProps: (u: Component['uuid'], p: Pick<Component, 'propsMap' | 'xProps' | 'grid'>) => void;
-  dragComponent: (u: Component['uuid'], l: Layout) => void;
-  addComponent: (c: Component, l: Layout) => void;
+  dragComponent: (u: Component['uuid'], l: Pick<Grid, 'x' | 'y'>) => void;
+  addComponent: (c: Component, l: Grid) => Component['uuid'];
   deleteComponent: (u: Schema[0]['uuid'] | undefined) => void;
 }
 
@@ -48,6 +47,8 @@ const DefaultStateContext: IStateContext = {
       grid: {
         x: 0,
         y: 0,
+        w: 75,
+        h: 32,
       },
     },
     {
@@ -60,7 +61,9 @@ const DefaultStateContext: IStateContext = {
       },
       grid: {
         x: 0,
-        y: 40,
+        y: 52,
+        w: 112,
+        h: 32,
       },
       xProps: {},
     },
@@ -70,7 +73,7 @@ const DefaultStateContext: IStateContext = {
 const DefaultDispatchContext: IDispatchContext = {
   importSchema: () => {},
   updateComponentProps: () => {},
-  addComponent: () => {},
+  addComponent: () => '',
   dragComponent: () => {},
   deleteComponent: () => {},
 };

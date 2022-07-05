@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-07-03 10:56:28
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 10:43:08
+ * @LastEditTime: 2022-07-05 20:02:25
  */
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -48,7 +48,7 @@ const Preview = () => {
             modifiedSchema.map((item) => (
               <Draggable
                 disabled
-                position={{ x: item.grid.x, y: item.grid.y }}
+                position={{ x: item.grid.x!, y: item.grid.y! }}
                 key={item.uuid}
               >
                 {(parser as any)[item.type]?.({ props: item.props, xProps: item.xProps })}
