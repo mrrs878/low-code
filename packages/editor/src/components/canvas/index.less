@@ -36,6 +36,15 @@
     &:active {
       border: 1px solid #f00;
     }
+
+    &.rules::after {
+      position: absolute;
+      content: '';
+      top: -99px;
+      bottom: 99px;
+      left: 0;
+      border: 1px solid #00f;
+    }
   }
   &-item__mask {
     position: relative;
@@ -91,6 +100,23 @@
     // transform: translateY(-999px);
     &.active {
       transform: translateY(0);
+    }
+  }
+
+  .rule {
+    position: absolute;
+    z-index: 3;
+    &.rule-y {
+      height: 1px;
+      background: linear-gradient(to right, #00f 0%, #00f 50%,transparent 50%);
+  	  background-size: 10px;
+	    background-repeat: repeat-x;
+    }
+    &.rule-x {
+      width: 1px;
+      background: linear-gradient(to bottom, #00f 0%, #00f 50%,transparent 50%);
+      background-size: 10px 10px;
+      background-repeat: repeat-y;
     }
   }
 }
