@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-29 11:11:21
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 21:58:38
+ * @LastEditTime: 2022-07-09 18:05:11
  */
 
 import { createContext } from 'react';
@@ -62,7 +62,7 @@ const DefaultStateContext: IStateContext = {
       grid: {
         x: 0,
         y: 52,
-        w: 112,
+        w: 110,
         h: 32,
       },
       xProps: {

@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 13:34:38
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 20:38:56
+ * @LastEditTime: 2022-07-09 17:30:11
  */
 
 import React from 'react';
@@ -33,7 +33,7 @@ export interface Component<T = any> {
   props?: Array<ComponentProp<T, keyof T>>;
   xProps?: any;
   propsMap?: { [key: string]: any };
-  resizable?: boolean;
+  resizable?: 'w' | 'h' | 'size' | 'none';
   grid: Grid;
 }
 
