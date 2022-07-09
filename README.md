@@ -2,12 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 23:00:28
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-02 23:21:37
+ * @LastEditTime: 2022-07-09 22:40:39
 -->
 
 # 低代码平台
 
-![preview](./assets/low-code-0.png);
+![preview](./assets/low-code-1.png);
 
 基于 JSON Schema
 

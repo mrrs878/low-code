@@ -2,12 +2,12 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 22:00:07
+ * @LastEditTime: 2022-07-09 22:40:44
  */
 
 import {
-  Alert, Form, Input, Collapse, Switch, Divider, Typography, Row, Col, Button, message,
-  Select, Drawer, Space,
+  Alert, Form, Input, Collapse, Switch, Typography, Row, Col, Button, message,
+  Select, Drawer, Space, InputNumber,
 } from 'antd';
 import React, {
   FC, useContext, useEffect, useRef, useState,
@@ -139,18 +139,18 @@ const Operator: FC<IProps> = ({
                   <>
                     <Space>
                       <Form.Item name={['grid', 'x']} label="x" required>
-                        <Input type="number" />
+                        <InputNumber type="number" />
                       </Form.Item>
                       <Form.Item name={['grid', 'y']} label="y" required>
-                        <Input type="number" />
+                        <InputNumber type="number" />
                       </Form.Item>
                     </Space>
                     <Space>
                       <Form.Item name={['grid', 'w']} label="w" required>
-                        <Input type="number" disabled={!component.resizable} />
+                        <InputNumber disabled={!(component.resizable === 'w' || component.resizable === 'size')} />
                       </Form.Item>
                       <Form.Item name={['grid', 'h']} label="h" required>
-                        <Input type="number" disabled={!component.resizable} />
+                        <InputNumber disabled={!(component.resizable === 'h' || component.resizable === 'size')} />
                       </Form.Item>
                     </Space>
                     {
@@ -188,8 +188,7 @@ const Operator: FC<IProps> = ({
               )
           }
         </Drawer>
-        <Divider />
-        <Space align="end">
+        <Space align="end" className="action-buttons">
           <DeleteBtn
             onConfirm={() => {
               deleteComponent(schemaConfig?.uuid);

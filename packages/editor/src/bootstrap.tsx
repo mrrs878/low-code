@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 21:11:08
+ * @LastEditTime: 2022-07-09 17:32:00
  */
 
 import React, { useRef, useState } from 'react';
@@ -32,7 +32,6 @@ register<ButtonProps>({
   preview() {
     return <Button>Button</Button>;
   },
-  resizable: false,
   props: [
     {
       name: 'value',
@@ -135,7 +134,7 @@ register<InputProps>({
   preview() {
     return <Input placeholder="请输入" />;
   },
-  resizable: true,
+  resizable: 'w',
   grid: {
     w: 178,
     h: 32,
