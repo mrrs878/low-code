@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-09 15:17:18
+ * @LastEditTime: 2022-07-09 15:48:05
  */
 
 import React, {
@@ -57,7 +57,7 @@ const calculateRulePos = (grids: Array<Grid>, p: Grid) => {
       // center - center
       if (Math.abs((p.y! + p.h! / 2) - (element.y! + element.h / 2)) < THRESHOLD) {
         res.y = element.y! + element.h / 2;
-        res.offsetY = -p.h;
+        res.offsetY = -p.h / 2;
       }
       // bottom - top
       if (Math.abs((p.y! + p.h) - element.y!) < THRESHOLD) {
@@ -76,6 +76,10 @@ const calculateRulePos = (grids: Array<Grid>, p: Grid) => {
       }
       if (Math.abs(p.x! - (element.x! + element.w)) < THRESHOLD) {
         res.x = element.x! + element.w;
+      }
+      if (Math.abs((p.x! + p.w! / 2) - (element.x! + element.w / 2)) < THRESHOLD) {
+        res.x = element.x! + element.w / 2;
+        res.offsetX = -p.w / 2;
       }
       if (Math.abs((p.x! + p.w) - element.x!) < THRESHOLD) {
         res.x = element.x!;
