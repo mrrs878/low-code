@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-09 22:38:12
+ * @LastEditTime: 2022-07-10 09:32:50
  */
 
 import React, {
@@ -222,6 +222,7 @@ const Canvas: FC<IProps> = ({
       {
         components.map((component, index) => (
           <Draggable
+            key={component.uuid}
             bounds=".editor-canvas"
             position={{ x: modifiedSchema[index].grid.x!, y: modifiedSchema[index].grid.y! }}
             offsetParent={document.querySelector<HTMLDivElement>('.editor-canvas') || undefined}
