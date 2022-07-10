@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:05:44
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-09 17:32:00
+ * @LastEditTime: 2022-07-10 09:25:43
  */
 
 import React, { useRef, useState } from 'react';
@@ -14,7 +14,7 @@ import { createRoot } from 'react-dom/client';
 import Canvas from 'Components/canvas';
 import Material, { register } from 'Components/material';
 import Operator from 'Components/operator';
-import { Component } from 'Components/material/registry';
+import { Component, defineProps } from 'Components/material/registry';
 import Tool from 'Components/tool';
 import Provider from 'Store/provider';
 import './index.less';
@@ -33,17 +33,15 @@ register<ButtonProps>({
     return <Button>Button</Button>;
   },
   props: [
-    {
+    defineProps<ButtonProps>('String', {
       name: 'value',
       description: '按钮文字',
-      type: String,
       default: 'Button',
       required: true,
-    },
-    {
+    }),
+    defineProps<ButtonProps>('Array', {
       name: 'onClick',
       description: '点击动作',
-      type: Array,
       default: '_',
       options: [
         {
@@ -53,14 +51,14 @@ register<ButtonProps>({
             {
               name: 'onClick.content',
               description: '提示内容',
-              type: String,
+              type: 'String',
               default: '提示内容',
               required: true,
             },
             {
               name: 'onClick.type',
               description: '提示类型',
-              type: Array,
+              type: 'Array',
               default: 'info',
               required: false,
               options: [
@@ -94,14 +92,7 @@ register<ButtonProps>({
         },
       ],
       required: true,
-    },
-    {
-      name: 'block',
-      description: '将按钮宽度调整为其父宽度的选项',
-      type: Boolean,
-      default: false,
-      required: false,
-    },
+    }),
   ],
   grid: {
     w: 75,
@@ -145,13 +136,12 @@ register<MessageArgsProps>({
   label: 'Message',
   key: 'message',
   props: [
-    {
+    defineProps('String', {
       name: 'content',
       description: '提示内容',
-      type: String,
       default: 'balabala',
       required: true,
-    },
+    }),
   ],
   render(props?) {
     // eslint-disable-next-line react/jsx-props-no-spreading

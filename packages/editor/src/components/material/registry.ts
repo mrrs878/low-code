@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 13:34:38
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-09 17:30:11
+ * @LastEditTime: 2022-07-10 09:25:42
  */
 
 import React from 'react';
@@ -11,13 +11,13 @@ import { Grid } from 'Store/context';
 export type ComponentOption = {
   value: string;
   label: string;
-  xProps?: any;
+  xProps?: Array<ComponentProp<any, any>>;
 } | string;
 
 export type ComponentProp<T, P extends keyof T> = {
   name: P;
   description: string,
-  type: T[P],
+  type: PropType,
   value?: T[P],
   options?: Array<ComponentOption>;
   default: T[P],
@@ -37,6 +37,8 @@ export interface Component<T = any> {
   grid: Grid;
 }
 
+export type PropType = 'String' | 'Number' | 'Array' | 'Boolean';
+
 const components: Array<Component> = [];
 const componentMap: Record<Component['label'], Component> = {};
 
@@ -45,4 +47,13 @@ function register<T>(component: Component<T>) {
   componentMap[component.key] = component;
 }
 
-export { register, componentMap, components };
+function defineProps<T>(type: PropType, props: Omit<ComponentProp<T, keyof T>, 'type'>): ComponentProp<T, keyof T> {
+  return {
+    ...props,
+    type,
+  };
+}
+
+export {
+  register, defineProps, componentMap, components,
+};

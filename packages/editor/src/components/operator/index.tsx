@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:45:39
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-09 22:40:44
+ * @LastEditTime: 2022-07-10 09:21:35
  */
 
 import {
@@ -12,7 +12,9 @@ import {
 import React, {
   FC, useContext, useEffect, useRef, useState,
 } from 'react';
-import { Component, componentMap, ComponentOption } from 'Components/material/registry';
+import {
+  Component, componentMap, ComponentOption, ComponentProp,
+} from 'Components/material/registry';
 import { DispatchContext, StateContext } from 'Store/context';
 import DeleteBtn from './components/Delete';
 import './index.less';
@@ -23,7 +25,7 @@ interface IProps {
   component: Component['uuid'];
 }
 
-const renderOption = (prop: any, config: any = {}) => {
+const renderOption = (prop: ComponentProp<any, any>, config: any = {}) => {
   if (!prop) {
     return <> </>;
   }
@@ -33,21 +35,21 @@ const renderOption = (prop: any, config: any = {}) => {
   let Option;
   let valuePropName = 'value';
   switch (prop.type) {
-    case Boolean:
+    case 'Boolean':
       Option = <Switch />;
       valuePropName = 'checked';
       break;
-    case String:
+    case 'String':
       Option = <Input />;
       break;
-    case Array:
+    case 'Array':
       Option = (
         <Select
           placeholder="请选择"
           onSelect={onSelect}
         >
           {
-            prop.options.map((option: ComponentOption, index: number) => (
+            prop.options?.map((option: ComponentOption, index: number) => (
               typeof option === 'string'
                 ? <Select.Option key={option}>{option}</Select.Option>
                 : <Select.Option index={index} key={option.value}>{option.label}</Select.Option>
