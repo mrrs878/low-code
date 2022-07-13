@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 18:11:13
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-05 22:02:10
+ * @LastEditTime: 2022-07-13 11:51:46
  */
 
 import { clone } from 'ramda';
@@ -34,6 +34,7 @@ export function schema2components(schema: Schema) {
   return schema.map((item) => ({
     ...clone(componentMap[item.type]),
     ...item,
+    grid: { ...item.grid, lockX: NaN, lockY: NaN },
     propsMap: item.props || props2propsMap(componentMap[item.type].props),
-  })) as Array<Component>;
+  }));
 }

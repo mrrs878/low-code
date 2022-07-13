@@ -2,23 +2,24 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-13 10:51:13
+ * @LastEditTime: 2022-07-13 20:04:50
  */
 
 import React, {
-  FC, memo, MutableRefObject, useContext, useRef, useState,
+  FC, memo, MutableRefObject, useContext, useEffect, useRef, useState,
 } from 'react';
 import classNames from 'classnames';
 import { DraggableCore } from 'react-draggable';
 import debounce from 'lodash.debounce';
-import { clone } from 'ramda';
+import { clone, remove } from 'ramda';
 import {
-  DispatchContext, StateContext,
+  DispatchContext, Grid, StateContext,
 } from 'Store/context';
 import { Component } from 'Components/material/registry';
 import { schema2components } from 'Utils/index';
 import Rule from './components/Rule';
 import Gap from './components/Gap';
+import { getLockPosition, getShapeDistance } from './deviceModel';
 import {
   Point, GapPos,
 } from './tool';
@@ -33,6 +34,11 @@ interface IProps {
   selectedComponent: Component['uuid'];
 }
 
+const getEffectivePosition = (grid: Grid & { lockX: number; lockY: number }) => ({
+  x: Number.isNaN(grid.lockX) ? grid.x : grid.lockX,
+  y: Number.isNaN(grid.lockY) ? grid.y : grid.lockY,
+});
+
 const Canvas: FC<IProps> = ({
   dragComponentRef,
   onSelect,
@@ -41,12 +47,16 @@ const Canvas: FC<IProps> = ({
   const { modifiedSchema } = useContext(StateContext);
   const { addComponent, dragComponent } = useContext(DispatchContext);
 
-  const [rulePos] = useState<Point>({ x: NaN, y: NaN });
+  const [rulePos, setRulePos] = useState<Point>({ x: NaN, y: NaN });
   const [gapPos] = useState<GapPos>({ x: NaN, y: NaN } as any);
 
   const [components, setComponents] = useState(() => schema2components(modifiedSchema));
 
   const canvas = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setComponents(schema2components(modifiedSchema));
+  }, [modifiedSchema]);
 
   console.log('[Canvas] render schema', modifiedSchema, components);
   return (
@@ -80,15 +90,27 @@ const Canvas: FC<IProps> = ({
           <DraggableCore
             key={component.uuid}
             onDrag={(_, data) => {
+              const grids = remove(index, 1, components).map(({ grid }) => grid);
+              const { shapeDistance, rulePosition } = getShapeDistance(grids, component.grid);
+              console.log('[onDrag]', components);
+
+              const res = getLockPosition(shapeDistance, component.grid);
               setComponents((prev) => {
+                console.log('[onDrag] shapeDistance', shapeDistance, res);
                 const tmp = clone(prev);
+                tmp[index].grid.lockX = res.lockX;
+                tmp[index].grid.lockY = res.lockY;
                 tmp[index].grid.x = component.grid.x! + data.deltaX;
                 tmp[index].grid.y = component.grid.y! + data.deltaY;
                 return tmp;
               });
+
+              setRulePos(rulePosition);
             }}
             onStop={() => {
-              dragComponent(component.uuid, component.grid);
+              const pos = getEffectivePosition(component.grid);
+              console.log('[onStop]', component.grid, pos);
+              dragComponent(component.uuid, pos);
             }}
           >
             <div
@@ -96,7 +118,10 @@ const Canvas: FC<IProps> = ({
                 active: selectedComponent === component.uuid,
               })}
               style={{
-                transform: `translate(${component.grid.x}px, ${component.grid.y}px)`,
+                transform: `translate(
+                  ${Number.isNaN(component.grid.lockX) ? component.grid.x : component.grid.lockX}px,
+                  ${Number.isNaN(component.grid.lockY) ? component.grid.y : component.grid.lockY}px
+                )`,
               }}
               key={component.uuid}
               role="presentation"
