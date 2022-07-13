@@ -2,26 +2,25 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-10 10:00:43
+ * @LastEditTime: 2022-07-13 10:51:13
  */
 
 import React, {
   FC, memo, MutableRefObject, useContext, useRef, useState,
 } from 'react';
 import classNames from 'classnames';
-import Draggable, { DraggableData } from 'react-draggable';
-import throttle from 'lodash.throttle';
+import { DraggableCore } from 'react-draggable';
 import debounce from 'lodash.debounce';
-import { remove } from 'ramda';
+import { clone } from 'ramda';
 import {
-  DispatchContext, Grid, StateContext,
+  DispatchContext, StateContext,
 } from 'Store/context';
 import { Component } from 'Components/material/registry';
 import { schema2components } from 'Utils/index';
 import Rule from './components/Rule';
 import Gap from './components/Gap';
 import {
-  Point, GapPos, calculateRulePos, calculateRuleGap,
+  Point, GapPos,
 } from './tool';
 import './index.less';
 
@@ -42,58 +41,12 @@ const Canvas: FC<IProps> = ({
   const { modifiedSchema } = useContext(StateContext);
   const { addComponent, dragComponent } = useContext(DispatchContext);
 
-  const [rulePos, setRulePos] = useState<Point>({ x: NaN, y: NaN });
-  const [gapPos, setGapPos] = useState<GapPos>({ x: NaN, y: NaN } as any);
+  const [rulePos] = useState<Point>({ x: NaN, y: NaN });
+  const [gapPos] = useState<GapPos>({ x: NaN, y: NaN } as any);
 
-  const components = schema2components(modifiedSchema);
+  const [components, setComponents] = useState(() => schema2components(modifiedSchema));
 
   const canvas = useRef<HTMLDivElement | null>(null);
-
-  const grids = modifiedSchema.map(({ grid }) => grid);
-
-  const snipToRule = (data: DraggableData, points: Array<Grid>, p: Grid, uuid: Component['uuid']) => {
-    let { x, y } = data;
-    const { w, h } = p;
-    const pos = calculateRulePos(points, {
-      x, y, w, h,
-    });
-    console.log('[onDrag] ruleIndex', pos);
-    if ((!Number.isNaN(pos.y) && pos.y !== rulePos.y)
-      || (!Number.isNaN(pos.x) && pos.x !== rulePos.x)) {
-      setRulePos(pos);
-    }
-    if (!Number.isNaN(pos.x)) {
-      x = pos.x;
-    }
-    if (!Number.isNaN(pos.y)) {
-      y = pos.y;
-    }
-    dragComponent(uuid, {
-      x: x + pos.offsetX, y: y + pos.offsetY,
-    });
-  };
-
-  const snipToGap = (data: DraggableData, points: Array<Grid>, p: Grid, uuid: Component['uuid']) => {
-    let { x, y } = data;
-    const { w, h } = p;
-    const gap = calculateRuleGap(points, {
-      x, y, w, h,
-    });
-    console.log('[onDrag] gap', points, gap);
-    if ((!Number.isNaN(gap.y2) && gap.y2 !== gapPos.y2)
-      || (!Number.isNaN(gap.x2) && gap.x2 !== gapPos.x2)) {
-      setGapPos(gap);
-    }
-    if (!Number.isNaN(gap.y2)) {
-      y = gap.y2 + gap.gapY;
-    }
-    if (!Number.isNaN(gap.x2)) {
-      x = gap.x2 + gap.gapX;
-    }
-    dragComponent(uuid, {
-      x, y,
-    });
-  };
 
   console.log('[Canvas] render schema', modifiedSchema, components);
   return (
@@ -124,34 +77,33 @@ const Canvas: FC<IProps> = ({
     >
       {
         components.map((component, index) => (
-          <Draggable
+          <DraggableCore
             key={component.uuid}
-            bounds=".editor-canvas"
-            position={{ x: modifiedSchema[index].grid.x!, y: modifiedSchema[index].grid.y! }}
-            offsetParent={document.querySelector<HTMLDivElement>('.editor-canvas') || undefined}
-            onDrag={throttle((_, data) => {
-              const t = remove(index, 1, grids);
-              const g = [...t, {
-                x: 0, y: 0, w: canvas.current?.offsetWidth!, h: canvas.current?.offsetHeight!,
-              }];
-              snipToRule(data, g, modifiedSchema[index].grid, component.uuid);
-              snipToGap(data, t, modifiedSchema[index].grid, component.uuid);
-            }, 300)}
+            onDrag={(_, data) => {
+              setComponents((prev) => {
+                const tmp = clone(prev);
+                tmp[index].grid.x = component.grid.x! + data.deltaX;
+                tmp[index].grid.y = component.grid.y! + data.deltaY;
+                return tmp;
+              });
+            }}
             onStop={() => {
-              setRulePos({ x: NaN, y: NaN });
-              setGapPos({ x: NaN, y: NaN } as any);
+              dragComponent(component.uuid, component.grid);
             }}
           >
             <div
               className={classNames('editor-canvas-item', {
                 active: selectedComponent === component.uuid,
               })}
-              key={modifiedSchema[index].uuid}
+              style={{
+                transform: `translate(${component.grid.x}px, ${component.grid.y}px)`,
+              }}
+              key={component.uuid}
               role="presentation"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('[Canvas] onClick', component, modifiedSchema[index]);
+                console.log('[Canvas] onClick', component);
                 if (selectedComponent === component.uuid) {
                   onSelect();
                   return;
@@ -162,14 +114,14 @@ const Canvas: FC<IProps> = ({
               <div
                 className="editor-canvas-item__mask"
                 style={{
-                  width: component.resizable ? modifiedSchema[index].grid.w : 'unset',
-                  height: component.resizable ? modifiedSchema[index].grid.h : 'unset',
+                  width: component.resizable ? component.grid.w : 'unset',
+                  height: component.resizable ? component.grid.h : 'unset',
                 }}
               >
                 {component.render(component.propsMap)}
               </div>
             </div>
-          </Draggable>
+          </DraggableCore>
         ))
       }
       <MRule pos={rulePos} />
