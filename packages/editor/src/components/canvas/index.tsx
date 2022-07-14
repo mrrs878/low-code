@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-14 20:28:16
+ * @LastEditTime: 2022-07-14 21:46:20
  */
 
 import React, {
@@ -24,6 +24,7 @@ import {
   Point, GapPos,
 } from './tool';
 import './index.less';
+import { BORDER_WIDTH } from './enum';
 
 const MRule = memo(Rule);
 const MGap = memo(Gap);
@@ -92,7 +93,7 @@ const Canvas: FC<IProps> = ({
         components.map((component, index) => (
           <DraggableCore
             key={component.uuid}
-            onDrag={(e, data) => {
+            onDrag={(_, data) => {
               console.log('[onDrag] shapeDistance', data.x, canvas.current?.offsetWidth);
               if (bounds.current && (data.x < startPos.current.x || data.y < startPos.current.y)) {
                 return;
@@ -100,7 +101,7 @@ const Canvas: FC<IProps> = ({
               if (
                 (component.grid.x! + data.deltaX < 0 || component.grid.y! + data.deltaY < 0)
                 || (component.grid.x! + data.deltaX + component.grid.w!
-                  > (canvas.current?.offsetWidth || 0) - 20)
+                  > (canvas.current?.offsetWidth || 0) - BORDER_WIDTH)
               ) {
                 bounds.current = true;
                 startPos.current = { x: data.x, y: data.y };

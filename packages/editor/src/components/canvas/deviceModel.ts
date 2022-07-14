@@ -2,10 +2,11 @@
 * @Author: mrrs878@foxmail.com
 * @Date: 2022-07-13 10:56:59
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-13 20:04:13
+ * @LastEditTime: 2022-07-14 21:44:26
 */
 
 import { Grid } from 'Store/context';
+import { THRESHOLD } from './enum';
 
 export type ShapeDistance = { magnetX: number, magnetY: number };
 
@@ -56,17 +57,17 @@ export const getShapeDistance = (devices: Array<Grid>, nowDevice: Grid) => {
           acc.magnetY = magnetY;
         }
 
-        if (Math.abs(leftToLeft) < 15 || Math.abs(leftToRight) < 15) {
+        if (Math.abs(leftToLeft) < THRESHOLD || Math.abs(leftToRight) < THRESHOLD) {
           rulePosition.x = shape.left;
         }
-        if (Math.abs(rightToRight) < 15 || Math.abs(rightToLeft) < 15) {
+        if (Math.abs(rightToRight) < THRESHOLD || Math.abs(rightToLeft) < THRESHOLD) {
           rulePosition.x = shape.right;
         }
 
-        if (Math.abs(topToTop) < 15 || Math.abs(topToBottom) < 15) {
+        if (Math.abs(topToTop) < THRESHOLD || Math.abs(topToBottom) < THRESHOLD) {
           rulePosition.y = shape.top;
         }
-        if (Math.abs(bottomToBottom) < 15 || Math.abs(bottomToTop) < 15) {
+        if (Math.abs(bottomToBottom) < THRESHOLD || Math.abs(bottomToTop) < THRESHOLD) {
           rulePosition.y = shape.bottom;
         }
 
@@ -82,10 +83,10 @@ export const getLockPosition = (shapeDistance: ShapeDistance, currentPos: Grid) 
     lockX: NaN,
     lockY: NaN,
   };
-  if (Math.abs(shapeDistance.magnetX) < 15) {
+  if (Math.abs(shapeDistance.magnetX) < THRESHOLD) {
     res.lockX = currentPos.x! + shapeDistance.magnetX;
   }
-  if (Math.abs(shapeDistance.magnetY) < 15) {
+  if (Math.abs(shapeDistance.magnetY) < THRESHOLD) {
     res.lockY = currentPos.y! + shapeDistance.magnetY;
   }
 
