@@ -2,7 +2,7 @@
  * @Author: mrrs878@foxmail.com
  * @Date: 2022-06-26 10:43:14
  * @LastEditors: mrrs878@foxmail.com
- * @LastEditTime: 2022-07-13 20:04:50
+ * @LastEditTime: 2022-07-14 20:28:16
  */
 
 import React, {
@@ -54,6 +54,9 @@ const Canvas: FC<IProps> = ({
 
   const canvas = useRef<HTMLDivElement | null>(null);
 
+  const startPos = useRef<Point>({ x: NaN, y: NaN });
+  const bounds = useRef(false);
+
   useEffect(() => {
     setComponents(schema2components(modifiedSchema));
   }, [modifiedSchema]);
@@ -89,14 +92,27 @@ const Canvas: FC<IProps> = ({
         components.map((component, index) => (
           <DraggableCore
             key={component.uuid}
-            onDrag={(_, data) => {
+            onDrag={(e, data) => {
+              console.log('[onDrag] shapeDistance', data.x, canvas.current?.offsetWidth);
+              if (bounds.current && (data.x < startPos.current.x || data.y < startPos.current.y)) {
+                return;
+              }
+              if (
+                (component.grid.x! + data.deltaX < 0 || component.grid.y! + data.deltaY < 0)
+                || (component.grid.x! + data.deltaX + component.grid.w!
+                  > (canvas.current?.offsetWidth || 0) - 20)
+              ) {
+                bounds.current = true;
+                startPos.current = { x: data.x, y: data.y };
+                return;
+              }
+              bounds.current = false;
               const grids = remove(index, 1, components).map(({ grid }) => grid);
               const { shapeDistance, rulePosition } = getShapeDistance(grids, component.grid);
               console.log('[onDrag]', components);
 
               const res = getLockPosition(shapeDistance, component.grid);
               setComponents((prev) => {
-                console.log('[onDrag] shapeDistance', shapeDistance, res);
                 const tmp = clone(prev);
                 tmp[index].grid.lockX = res.lockX;
                 tmp[index].grid.lockY = res.lockY;
@@ -111,6 +127,7 @@ const Canvas: FC<IProps> = ({
               const pos = getEffectivePosition(component.grid);
               console.log('[onStop]', component.grid, pos);
               dragComponent(component.uuid, pos);
+              bounds.current = false;
             }}
           >
             <div
